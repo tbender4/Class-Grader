@@ -33,4 +33,4 @@ class Grading:
 	
 	def score_curve_style(self, style):
 		if style == 0:		#flat, no change
-			curve == 0
+			curve == 1
