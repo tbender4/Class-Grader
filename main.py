@@ -16,5 +16,5 @@ create a grading database application
 print("hello")
 myStudent = student.Student()
 
-box = tkinter.Tk()
-box.mainloop()
+mainGUI = tkinter.Tk()
+mainGUI.mainloop()
