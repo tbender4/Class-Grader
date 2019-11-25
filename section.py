@@ -1,15 +1,21 @@
 import student
+from grading import Score, Attendance
 
 class Section:
+
     def __init__(self, sectionID):
         self.sectionID = sectionID
         # self.sectionName = sectionName
-        self.attendance = []
-        self.homework = []
-        self.quiz = []
-        self.exam = []
+
+        #NEED TO COMBINE THIS
+        # self.attendance = Attendance()[]
+        # self.homework = Score()[]
+        # self.quiz = Score()
+        # self.exam = Score()
 
         self.students = []  # array of students
+        #NEED TO COMBINE THIS END
+
         initialStudent = student.Student(0)
         self.students.append(initialStudent)
 

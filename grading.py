@@ -1,12 +1,12 @@
 import math
 
 class Score:
-    def __init__(self):
-        self.score_grade = -1
-        self.curve_grade = -1
-        self.use_curve = False
+    # def __init__(self):
+    #     self.score_grade = -1
+    #     self.curve_grade = -1
+    #     self.use_curve = False
 
-    def __init__(self, score_grade, use_curve):
+    def __init__(self, score_grade=-1, use_curve=False, curve_grade = -1):
         self.score_grade = score_grade
         self.curve_grade = score_grade
         self.use_curve = use_curve
@@ -42,10 +42,8 @@ class Score:
 
 class Attendance:
 	# status numbers: -1 = unknown, 0 = absent, 1 = present, 2 = late
-    def __init__(self):
-        self.day_status = -1
     
-    def __init__(self, day_status):
+    def __init__(self, day_status=-1):
         self.day_status = day_status
 
     @staticmethod
