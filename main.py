@@ -5,6 +5,7 @@
 
 import tkinter
 from course import Course
+from gui import main_window
 # import student
 #import matplotlib
 
@@ -18,25 +19,11 @@ then integrate matplotlib
 use json to store files. json plays with dictionaries
 """
 
-def subwindow():
-  sub_window=tkinter.Tk()
-  sub_window.mainloop()
 # print("hello")
 # myCourse = Course(101, "Intro to CS")
 # myCourse.addNewSection()
 # myCourse.sectionList[0].addStudent()
 # myCourse.printCourse()
-
-
-main_window = tkinter.Tk()
-main_window.title("Class Grader")
-
-main_window.geometry('400x300')
-
-new_course_button = tkinter.Button(main_window, text="New", state='normal', command=subwindow)
-new_course_button.grid(column=0, row=0)
-label = tkinter.Label(main_window, text='Create a new course')
-label.grid(column=1, row=0)
 
 
 main_window.mainloop()

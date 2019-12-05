@@ -4,6 +4,8 @@ import section
 class Course:
     def __init__(self, courseID, name = ""):
         self.name = name
+        if name == "":
+            self.name = courseID    #Copies text of courseID
         self.courseID = courseID
         initialSection = section.Section(0)
         self.sectionList = []
