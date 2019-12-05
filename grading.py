@@ -11,6 +11,9 @@ class Score:
         self.curve_grade = score_grade
         self.use_curve = use_curve
 
+    def printScore(self):
+        print("Raw:", self.score_grade, "Curve", self.curve_grade, "Using Curve:",self.use_curve,end='')
+
     #apply to self grade
     def score_curve(self, style, variable=100):
         if style == 0:  # flat, no change to score
@@ -45,6 +48,13 @@ class Attendance:
     
     def __init__(self, day_status=-1):
         self.day_status = day_status
+
+    def edit_day(self, day_status):
+        day_status = day_status
+
+
+    def printAttendance(self):
+        print(self.day_status, end='')
 
     @staticmethod
     def attendance_generate_grade(attendance=[-1], free_miss_days=0, have_max_missed_days=False, max_missed_days=6, late_convert_to_absence=False, late_penalty=0.5):

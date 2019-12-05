@@ -2,11 +2,11 @@
 import section
 
 class Course:
-    def __init__(self, courseID, name):
+    def __init__(self, courseID, name = ""):
         self.name = name
         self.courseID = courseID
         initialSection = section.Section(0)
-        self.sectionList = []   #creates one initial section.
+        self.sectionList = []
         self.sectionList.append(initialSection)
 
 
