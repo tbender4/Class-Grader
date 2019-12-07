@@ -3,8 +3,8 @@
 # macOS install: python3 -m pip install -U matplotlib
 # Windows install: py -m pip install -U matplotlib
 
-import tkinter
-from course import Course
+# import tkinter
+# from course import Course
 from gui import main_window
 # import student
 #import matplotlib

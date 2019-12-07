@@ -1,4 +1,5 @@
 import tkinter
+from tkinter import ttk
 from tkinter import simpledialog
 from course import Course
 
@@ -61,27 +62,37 @@ def new_course():
 
 
 def course_window(course_ID, course_name):
-  def report_size(window):
+  def report_size(window):    #debug to report window size for testing
     print(window.winfo_width(), window.winfo_height())
 
   course_window=tkinter.Toplevel()
 
   course_window.geometry('950x800')
-  tkinter.Button(course_window, text="Report size", command=lambda: report_size(course_window)).grid(row=0)
+  # tkinter.Button(course_window, text="Report size", command=lambda: report_size(course_window)).grid(row=0)
 
   #Menu Bar
   menu_bar = tkinter.Menu(course_window)
   file_menu = tkinter.Menu(menu_bar, tearoff=0)
+  file_menu.add_separator()
+  file_menu.add_command(label="Exit", command=exit)
   menu_bar.add_cascade(label="File", menu=file_menu)
   help_menu = tkinter.Menu(menu_bar, tearoff=0)
   help_menu.add_command(label="About", command=lambda: About_Modal(course_window))    #lamba fixes arguments
   menu_bar.add_cascade(label="Help", menu=help_menu)
   course_window.config(menu=menu_bar)
 
+
+  #generation of the course in question
+  #TODO show more than one course in the GUI at the same time
   course = Course(course_ID, course_name)
   course.printCourse()
 
-  
+  #window elements with course:
+  tkinter.Label(course_window, text = course.courseID, font=(None, 16)).grid(row=0)
+  tkinter.Label(course_window, text = course.name, font=(None, 16)).grid(row=0, column=1)
+  section_frame = tkinter.Frame(course_window)
+  tkinter.Label(section_frame, text="test").grid(row=0)
+  section_frame.grid(row=1)
 
 
 main_window = tkinter.Tk()
