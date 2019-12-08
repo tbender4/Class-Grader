@@ -57,6 +57,10 @@ class New_Course(simpledialog.Dialog):                   #inherit tkinter.simple
     self.parent.withdraw()
     course_window(self.new_course_ID.get().strip(), self.new_course_name.get().strip())
 
+class Section_Graph:
+  def __init__(self):
+    print('test')
+
 def new_course():
   New_Course(main_window)
 
@@ -80,7 +84,7 @@ def course_window(course_ID, course_name):
   help_menu.add_command(label="About", command=lambda: About_Modal(course_window))    #lamba fixes arguments
   menu_bar.add_cascade(label="Help", menu=help_menu)
   course_window.config(menu=menu_bar)
-
+  
 
   #generation of the course in question
   #TODO show more than one course in the GUI at the same time
@@ -88,11 +92,20 @@ def course_window(course_ID, course_name):
   course.printCourse()
 
   #window elements with course:
-  tkinter.Label(course_window, text = course.courseID, font=(None, 16)).grid(row=0)
-  tkinter.Label(course_window, text = course.name, font=(None, 16)).grid(row=0, column=1)
-  section_frame = tkinter.Frame(course_window)
-  tkinter.Label(section_frame, text="test").grid(row=0)
-  section_frame.grid(row=1)
+  tkinter.Label(course_window, text = course.courseID + ' - ' + course_name, font=(None, 16)).grid(sticky='W', row=0, column= 0)
+
+
+  #display all of the section info
+
+  sections_notebook = ttk.Notebook(master=course_window)
+
+
+  #Have tabs for each section
+  section_frame_test = tkinter.Frame(sections_notebook)
+  tkinter.Label(section_frame_test, text="i should be in the tab").grid(row=0)
+  sections_notebook.add(child=section_frame_test, text="tab_name")
+  sections_notebook.grid(row=2, column=0)
+
 
 
 main_window = tkinter.Tk()

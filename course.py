@@ -7,7 +7,7 @@ class Course:
         if name == "":
             self.name = courseID    #Copies text of courseID
         self.courseID = courseID
-        initialSection = section.Section(0)
+        initialSection = section.Section(1)
         self.sectionList = []
         self.sectionList.append(initialSection)
 
