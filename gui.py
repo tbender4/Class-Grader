@@ -58,8 +58,15 @@ class New_Course(simpledialog.Dialog):                   #inherit tkinter.simple
     course_window(self.new_course_ID.get().strip(), self.new_course_name.get().strip())
 
 class Section_Graph:
-  def __init__(self):
-    print('test')
+  def __init__(self, master, section=Course('MAC000', 'test_000').sectionList[0]):
+    print('generating section')
+    #Have tabs for each section
+    section_frame = tkinter.Frame(master)
+    section_tree = ttk.Treeview(section_frame)
+    section_tree.grid(row=0, column=0)
+  # tkinter.Label(section_frame_test, text="i should be in the tab").grid(row=0)
+    self.section_frame = section_frame
+    
 
 def new_course():
   New_Course(main_window)
@@ -101,9 +108,9 @@ def course_window(course_ID, course_name):
 
 
   #Have tabs for each section
-  section_frame_test = tkinter.Frame(sections_notebook)
-  tkinter.Label(section_frame_test, text="i should be in the tab").grid(row=0)
-  sections_notebook.add(child=section_frame_test, text="tab_name")
+
+  # tkinter.Label(section_frame_test, text="i should be in the tab").grid(row=0)
+  sections_notebook.add(child=Section_Graph(section_frame), text="tab_name")
   sections_notebook.grid(row=2, column=0)
 
 
