@@ -57,15 +57,22 @@ class New_Course(simpledialog.Dialog):                   #inherit tkinter.simple
     self.parent.withdraw()
     course_window(self.new_course_ID.get().strip(), self.new_course_name.get().strip())
 
-class Section_Graph:
+class Section_Tree:   #table view
   def __init__(self, master, section=Course('MAC000', 'test_000').sectionList[0]):
     print('generating section')
     #Have tabs for each section
-    section_frame = tkinter.Frame(master)
-    section_tree = ttk.Treeview(section_frame)
+    section_tree = ttk.Treeview(master)
+    section_tree['columns'] = ('student', 'attendance', 'homework', 'quiz', 'exam')
+    section_tree.heading('student', text="Name")
+    section_tree.heading('attendance', text="Attendance")
+    section_tree.heading('homework', text="Homework")
+    section_tree.heading('quiz', text="Quiz")
+    section_tree.heading('exam', text="Exam")
+
+
     section_tree.grid(row=0, column=0)
   # tkinter.Label(section_frame_test, text="i should be in the tab").grid(row=0)
-    self.section_frame = section_frame
+    self.section_tree = section_tree
     
 
 def new_course():
@@ -108,9 +115,8 @@ def course_window(course_ID, course_name):
 
 
   #Have tabs for each section
-
-  # tkinter.Label(section_frame_test, text="i should be in the tab").grid(row=0)
-  sections_notebook.add(child=Section_Graph(section_frame), text="tab_name")
+  section_frame = tkinter.Frame(sections_notebook)
+  sections_notebook.add(child=Section_Tree(sections_notebook).section_tree, text="tab_name")
   sections_notebook.grid(row=2, column=0)
 
 
