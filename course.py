@@ -15,6 +15,7 @@ class Course:
     def addNewSection(self):
         newSection = section.Section(self.sectionList[-1].getSectionID()+1) #quick generation of ID
         self.sectionList.append(newSection)
+        return self.sectionList[-1] #returns back added section for use in GUI
     
     # delete section
 

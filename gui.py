@@ -37,7 +37,7 @@ class New_Course(simpledialog.Dialog):                   #inherit tkinter.simple
 
   def body(self, master):
 
-    tkinter.Label(master, text="Course ID (ex: MAC108):").grid(column = 0, row=0)
+    tkinter.Label(master, text="Course ID (ex: MAC108):").grid(column = 0, row=0, sticky='w')
     tkinter.Label(master, text="Course Full Name (ex: Intro to Python):").grid(column = 0, row=1)
     self.new_course_ID = tkinter.Entry(master)
     self.new_course_name = tkinter.Entry(master)
@@ -61,16 +61,33 @@ class Section_Tree:   #table view
   def __init__(self, master, section=Course('MAC000', 'test_000').sectionList[0]):
     print('generating section')
     #Have tabs for each section
+    
     section_tree = ttk.Treeview(master)
-    section_tree['columns'] = ('student', 'attendance', 'homework', 'quiz', 'exam')
-    section_tree.heading('student', text="Name")
-    section_tree.heading('attendance', text="Attendance")
-    section_tree.heading('homework', text="Homework")
-    section_tree.heading('quiz', text="Quiz")
-    section_tree.heading('exam', text="Exam")
+
+    header_name_dict = {
+      'student_id':'ID',
+      'student_name':'Name',
+      'attendance':'Attendance',
+      'homework':'Homework',
+      'quiz':'Quiz',
+      'exam':'Exam'
+    }
+    section_tree['columns'] = list(header_name_dict.keys())
+    for key, value in header_name_dict.items():
+      section_tree.column(key, width=50)
+      section_tree.heading(key, text=value)
+    section_tree.column('attendance', width=70)
+    section_tree.column('homework', width=70)
+    section_tree.column('student_name', width=120)
 
 
     section_tree.grid(row=0, column=0)
+
+    #scrollbar
+    # scroll = ttk.Scrollbar(section_tree, orient=tkinter.HORIZONTAL, command=section_tree.yview)
+    # section_tree.configure(yscrollcommand=scroll.set)
+    # scroll.grid(row=1, column=0)
+
   # tkinter.Label(section_frame_test, text="i should be in the tab").grid(row=0)
     self.section_tree = section_tree
     
@@ -78,15 +95,27 @@ class Section_Tree:   #table view
 def new_course():
   New_Course(main_window)
 
+def test_course():
+  course_window('MAC000', 'Intro to Testing')
 
 def course_window(course_ID, course_name):
   def report_size(window):    #debug to report window size for testing
     print(window.winfo_width(), window.winfo_height())
 
-  course_window=tkinter.Toplevel()
+  def add_new_section(notebook, course):
+    child = Section_Tree(notebook, course.addNewSection()).section_tree
+    text = course.courseID + '-' + "{:02d}".format(course.sectionList[-1].sectionID)
+    
+    notebook.add(child=child, text=text)
+    
 
+  #generation of the course in question
+  #TODO show more than one course in the GUI at the same time
+  course = Course(course_ID, course_name)
+  course.printCourse()
+
+  course_window=tkinter.Toplevel()
   course_window.geometry('950x800')
-  # tkinter.Button(course_window, text="Report size", command=lambda: report_size(course_window)).grid(row=0)
 
   #Menu Bar
   menu_bar = tkinter.Menu(course_window)
@@ -100,24 +129,29 @@ def course_window(course_ID, course_name):
   course_window.config(menu=menu_bar)
   
 
-  #generation of the course in question
-  #TODO show more than one course in the GUI at the same time
-  course = Course(course_ID, course_name)
-  course.printCourse()
-
   #window elements with course:
   tkinter.Label(course_window, text = course.courseID + ' - ' + course_name, font=(None, 16)).grid(sticky='W', row=0, column= 0)
 
 
   #display all of the section info
-
   sections_notebook = ttk.Notebook(master=course_window)
 
-
-  #Have tabs for each section
+  #Have tabs for each section 
   section_frame = tkinter.Frame(sections_notebook)
-  sections_notebook.add(child=Section_Tree(sections_notebook).section_tree, text="tab_name")
-  sections_notebook.grid(row=2, column=0)
+  for section in course.sectionList:
+    sections_notebook.add(child=Section_Tree(sections_notebook, section).section_tree,
+    text=course.courseID + '-' + "{:02d}".format(course.sectionList[-1].sectionID))
+
+
+  #placing course_window grid
+  tkinter.Button(course_window, text="Report size",
+                 command=lambda: report_size(course_window)).grid(row=1, sticky='W')
+  add_button = tkinter.Button(course_window, text="Add Section",
+                 command=lambda: add_new_section(sections_notebook, course))
+  add_button.grid(column=1, row=1, sticky='W')
+
+  sections_notebook.grid(row=2, columnspan=2) #colspan is dirty button spacing fix
+
 
 
 
@@ -128,7 +162,9 @@ main_window.geometry('400x300')
 
 
 new_course_button = tkinter.Button(main_window, text="New", state='normal', command=new_course)
+test_course_button = tkinter.Button(main_window, text="Test", state='normal', command=test_course)
 new_course_button.grid(column=0, row=0)
+test_course_button.grid(column=0, row=1)
 label = tkinter.Label(main_window, text='Create a new course')
 label.grid(column=1, row=0)
 
