@@ -1,7 +1,7 @@
 class Student:
 
     def __init__(self, id, last_name="last_name", first_name = "first_name"):
-        print("constructor")
+        print("student constructor")
         self.first_name = first_name
         self.last_name = last_name
         self.id = id

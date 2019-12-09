@@ -26,7 +26,7 @@ This software is open source and is hosted on github.com/tbender4/Class-Grader""
     #size and location
     x = window.winfo_rootx()
     y = window.winfo_rooty()
-    about.geometry('240x195+%d+%d' % (x,y))
+    about.geometry('250x200+%d+%d' % (x,y))
     about.resizable(False, False)
     about.transient(window) #makes this a temporary button
     about.grab_set()
@@ -64,8 +64,9 @@ class Section_Tree:   #table view
     
     section_tree = ttk.Treeview(master)
 
+    #Tree view
     header_name_dict = {
-      'student_id':'ID',
+#      'student_id':'ID',
       'student_name':'Name',
       'attendance':'Attendance',
       'homework':'Homework',
@@ -76,10 +77,14 @@ class Section_Tree:   #table view
     for key, value in header_name_dict.items():
       section_tree.column(key, width=50)
       section_tree.heading(key, text=value)
+    section_tree.heading('#0', text='ID')  #ID pertains to student ID
+    section_tree.column('#0', width=40)     
     section_tree.column('attendance', width=70)
     section_tree.column('homework', width=70)
     section_tree.column('student_name', width=120)
 
+    #inserting student to tree
+    section_tree.insert('', 'end', text='test', values=('a,', 'b', 'c', 'd'))
 
     section_tree.grid(row=0, column=0)
 
@@ -121,7 +126,7 @@ def course_window(course_ID, course_name):
   menu_bar = tkinter.Menu(course_window)
   file_menu = tkinter.Menu(menu_bar, tearoff=0)
   file_menu.add_separator()
-  file_menu.add_command(label="Exit", command=exit)
+  file_menu.add_command(label="Exit", command=main_window.destroy)
   menu_bar.add_cascade(label="File", menu=file_menu)
   help_menu = tkinter.Menu(menu_bar, tearoff=0)
   help_menu.add_command(label="About", command=lambda: About_Modal(course_window))    #lamba fixes arguments
