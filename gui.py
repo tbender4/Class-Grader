@@ -84,7 +84,15 @@ class Section_Tree:   #table view
     section_tree.column('student_name', width=120)
 
     #inserting student to tree
-    section_tree.insert('', 'end', text='test', values=('a,', 'b', 'c', 'd'))
+    for student_grade in section.student_grade_list:
+      student_ID = student_grade['student'].id
+      student_name = student_grade['student'].last_first
+      #b, c, and d should be attendances, homeworks, quizzes
+      section_tree.insert('', 'end', text=student_ID, values=(student_name, 'b', 'c', 'd'))
+
+    # student_ID = section.student_grade_list[0]['student'].id
+    # student_name = section.student_grade_list[0]['student'].last_first
+    # section_tree.insert('', 'end', text=student_ID, values=(student_name, 'b', 'c', 'd'))
 
     section_tree.grid(row=0, column=0)
 
