@@ -156,14 +156,17 @@ def course_window(course_ID, course_name):
   sections_notebook = ttk.Notebook(master=course_window)
 
   #Have tabs for each section 
-
+  #Generate tables from current list
   for section in course.sectionList:
     section_frame = tkinter.Frame(sections_notebook)
     section_tree = Section_Tree(section_frame, section)
-    section_tree.section_tree.grid(row=0, column=0)
+    section_tree.section_tree.grid(row=0, columnspan=2)
     sections_notebook.add(child=section_frame, text=course.courseID + '-' + "{:02d}".format(course.sectionList[-1].sectionID))
     add_student = tkinter.Button(section_frame, text='Add Student', command=lambda: section_tree.add_student())
+    print_section = tkinter.Button(
+        section_frame, text='PrintSection', command=lambda: section_tree.section.printSection())
     add_student.grid(row=1, column=0)
+    print_section.grid(row=1, column = 1)
     
     
 
