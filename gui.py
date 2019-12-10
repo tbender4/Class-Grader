@@ -26,7 +26,7 @@ This software is open source and is hosted on github.com/tbender4/Class-Grader""
     #size and location
     x = window.winfo_rootx()
     y = window.winfo_rooty()
-    about.geometry('250x200+%d+%d' % (x,y))
+    about.geometry('280x200+%d+%d' % (x,y))
     about.resizable(False, False)
     about.transient(window) #makes this a temporary button
     about.grab_set()
@@ -66,7 +66,7 @@ class Section_Tree:   #table view
 
     #Tree view
     header_name_dict = {
-#      'student_id':'ID',
+      # 'student_id':'ID',
       'student_name':'Name',
       'attendance':'Attendance',
       'homework':'Homework',
@@ -81,18 +81,15 @@ class Section_Tree:   #table view
     section_tree.column('#0', width=40)     
     section_tree.column('attendance', width=70)
     section_tree.column('homework', width=70)
-    section_tree.column('student_name', width=120)
+    section_tree.column('student_name', width=180)
 
     #inserting student to tree
     for student_grade in section.student_grade_list:
       student_ID = student_grade['student'].id
       student_name = student_grade['student'].last_first
-      #b, c, and d should be attendances, homeworks, quizzes
+      #b, c, and d, e should be attendances, homeworks, quizzes, exams
       section_tree.insert('', 'end', text=student_ID, values=(student_name, 'b', 'c', 'd'))
 
-    # student_ID = section.student_grade_list[0]['student'].id
-    # student_name = section.student_grade_list[0]['student'].last_first
-    # section_tree.insert('', 'end', text=student_ID, values=(student_name, 'b', 'c', 'd'))
 
     section_tree.grid(row=0, column=0)
 
@@ -101,8 +98,16 @@ class Section_Tree:   #table view
     # section_tree.configure(yscrollcommand=scroll.set)
     # scroll.grid(row=1, column=0)
 
-  # tkinter.Label(section_frame_test, text="i should be in the tab").grid(row=0)
     self.section_tree = section_tree
+    self.section = section
+  
+  def add_student(self, last_name = 'test', first_name = 'name_man'):
+    print('adding student')
+    new_student = self.section.addStudent(last_name, first_name)
+    print(new_student)
+    student_id = new_student['student'].id
+    name = new_student['student'].last_first
+    self.section_tree.insert('', 'end', text=student_id, values=(name, 'n', 'o', 'p'))
     
 
 def new_course():
@@ -110,6 +115,7 @@ def new_course():
 
 def test_course():
   course_window('MAC000', 'Intro to Testing')
+
 
 def course_window(course_ID, course_name):
   def report_size(window):    #debug to report window size for testing
@@ -121,7 +127,7 @@ def course_window(course_ID, course_name):
     
     notebook.add(child=child, text=text)
     
-
+  
   #generation of the course in question
   #TODO show more than one course in the GUI at the same time
   course = Course(course_ID, course_name)
@@ -150,10 +156,16 @@ def course_window(course_ID, course_name):
   sections_notebook = ttk.Notebook(master=course_window)
 
   #Have tabs for each section 
-  section_frame = tkinter.Frame(sections_notebook)
+
   for section in course.sectionList:
-    sections_notebook.add(child=Section_Tree(sections_notebook, section).section_tree,
-    text=course.courseID + '-' + "{:02d}".format(course.sectionList[-1].sectionID))
+    section_frame = tkinter.Frame(sections_notebook)
+    section_tree = Section_Tree(section_frame, section)
+    section_tree.section_tree.grid(row=0, column=0)
+    sections_notebook.add(child=section_frame, text=course.courseID + '-' + "{:02d}".format(course.sectionList[-1].sectionID))
+    add_student = tkinter.Button(section_frame, text='Add Student', command=lambda: section_tree.add_student())
+    add_student.grid(row=1, column=0)
+    
+    
 
 
   #placing course_window grid
@@ -163,14 +175,14 @@ def course_window(course_ID, course_name):
                  command=lambda: add_new_section(sections_notebook, course))
   add_button.grid(column=1, row=1, sticky='W')
 
-  sections_notebook.grid(row=2, columnspan=2) #colspan is dirty button spacing fix
+  sections_notebook.grid(row=2, columnspan=2, sticky='se') #colspan is dirty button spacing fix
+
 
 
 
 
 main_window = tkinter.Tk()
 main_window.title("Class Grader")
-
 main_window.geometry('400x300')
 
 

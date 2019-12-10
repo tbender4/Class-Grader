@@ -3,9 +3,9 @@ from grading import Score, Attendance
 
 class Section:
 
-    def student_grade_model(self, id=-1): # id pass to studentID
+    def student_grade_model(self, id=-1, last_name = 'last_name', first_name = 'first_name'): # id pass to studentID
         return {
-            "student": student.Student(id),
+            "student": student.Student(id, last_name, first_name),
             "attendances": [],  #Attendance()
             "homeworks": [],         #Score()
             "quizzes": [],           #Score()
@@ -49,9 +49,10 @@ class Section:
     def addStudent(self, last_name = "last_name", first_name = "first_name"):
         #adding a student also adds a
         lastStudent = self.student_grade_list[-1]
-        newID = lastStudent["student"].id
-        newStudent = self.student_grade_model(newID)
+        newID = lastStudent["student"].id+1
+        newStudent = self.student_grade_model(newID, last_name, first_name)
         self.student_grade_list.append(newStudent)
+        return newStudent
 
 
 
