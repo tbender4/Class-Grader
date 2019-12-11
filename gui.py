@@ -154,16 +154,24 @@ class Section_Tree:   #table view
 
   def edit_student(self):
     focus = self.section_tree.focus()
+    # print(focus[]
     student_tv = self.section_tree
-    new_student = Edit_Student(self.master)
+    l_f = student_tv.item(focus)['values'][0].split(",")
+    last = l_f[0]
+    first = l_f[1]
+    print('test', l_f)
+
+    new_student = Edit_Student(self.master, last, first)
     last_first = new_student.last_name + ', ' + new_student.first_name
-    student_tv.item(focus, values=(last_first, 'b', 'c', 'd'))
+    student_tv.item(focus, values=(last_first, new_student.att_avg, new_student.hw_avg, new_student.exam_avg, new_student.quiz_avg))
     print(self.section_tree.item(self.section_tree.focus()))
 
 
 class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
-  def __init__(self, parent):
+  def __init__(self, parent, last_name='l', first_name='f'):
     # inherited constructor needs original window
+    self.last_name = last_name
+    self.first_name = first_name
     super().__init__(parent, title="Edit Student Information:")
 
   def body(self, master):
@@ -172,8 +180,11 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
         column=0, row=0, sticky='e')
     tkinter.Label(master, text="First Name:").grid(
         column=0, row=1, sticky='e')
+    print(self.last_name, self.first_name)
     self.last_name_entry = tkinter.Entry(master)
+    self.last_name_entry.insert(0, self.last_name)
     self.first_name_entry = tkinter.Entry(master)
+    self.first_name_entry.insert(0, self.first_name)
 
     self.last_name_entry.grid(column=1, row=0)
     self.first_name_entry.grid(column=1, row=1)
@@ -183,40 +194,62 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
     tkinter.Label(master, text="Quiz:\n(from 0 - 100)").grid(row=2, column=2)
     tkinter.Label(master, text="Exam:\n(from 0 - 100)").grid(row=2, column=3)
 
-    att_entry = []
-    for i in range(3,10):
+    self.att_entry = []
+    for i in range(3,15):
       entry = tkinter.Entry(master)
       entry.insert(0, '0')
       entry.grid(row=i, column = 0)
-      att_entry.append(entry)
+      self.att_entry.append(entry)
 
-    hw_entry = []
-    for i in range(3, 10):
+    self.hw_entry = []
+    for i in range(3, 15):
       entry = tkinter.Entry(master)
       entry.insert(0, '0')
       entry.grid(row=i, column=1)
-      hw_entry.append(entry)
+      self.hw_entry.append(entry)
 
-    quiz_entry = []
-    for i in range(3, 10):
+    self.quiz_entry = []
+    for i in range(3, 15):
       entry = tkinter.Entry(master)
       entry.insert(0, '0')
       entry.grid(row=i, column=2)
-      quiz_entry.append(entry)
+      self.quiz_entry.append(entry)
 
 
-    exam_entry = []
-    for i in range(3, 10):
+    self.exam_entry = []
+    for i in range(3, 7):
       entry = tkinter.Entry(master)
       entry.insert(0, '0')
       entry.grid(row=i, column=3)
-      exam_entry.append(entry)
+      self.exam_entry.append(entry)
 
     return None
 
   def validate(self):
+    try:
+      for entry in self.att_entry:
+        value = int(entry.get().strip())
+        if value > 1 or value < 0:
+          return 0
+      for entry in self.hw_entry:
+        value = int(entry.get().strip())
+        if value > 100 or value < 0:
+          return 0
+      for entry in self.quiz_entry:
+        value = int(entry.get().strip())
+        if value > 100 or value < 0:
+          return 0
+      for entry in self.exam_entry:
+        value = int(entry.get().strip())
+        if value > 100 or value < 0:
+          return 0
+
+    except ValueError:
+      return 0
+
     if self.last_name_entry.get().strip() == '' or self.first_name_entry.get().strip() == '':
       return 0
+
     return 1
 
   def apply(self):
@@ -224,7 +257,30 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
 
     self.last_name = self.last_name_entry.get().strip()
     self.first_name = self.first_name_entry.get().strip()
+    
+    self.att_avg = 100 # reports back as percentage
+    att_sum = 0
+    for i in self.att_entry:
+      att_sum += int(i.get().strip())
+      print(att_sum)
+    self.att_avg = str(round(att_sum / len(self.att_entry) * 100, 2))+"%"
+    
+    hw_sum = 0
+    for i in self.hw_entry:
+      hw_sum += int(i.get().strip()) / 100
+    self.hw_avg = str(round(hw_sum / len(self.hw_entry) * 100, 2))+"%"
 
+    quiz_sum = 0
+    for i in self.quiz_entry:
+      quiz_sum += int(i.get().strip()) / 100
+    self.quiz_avg = str(round(quiz_sum / len(self.quiz_entry) * 100, 2))+"%"
+
+    exam_sum = 0
+    for i in self.exam_entry:
+      exam_sum += int(i.get().strip()) / 100
+    self.exam_avg = str(round(exam_sum / len(self.exam_entry) * 100, 2))+"%"
+
+    
 
 def new_course():
   New_Course(main_window)
@@ -316,12 +372,9 @@ def course_window(course_ID, course_name):
                  command=course.printCourse).grid(row=3, sticky='w')
 
 
-
-
 main_window = tkinter.Tk()
 main_window.title("Class Grader")
 main_window.geometry('400x300')
-
 
 new_course_button = tkinter.Button(main_window, text="New", state='normal', command=new_course)
 test_course_button = tkinter.Button(main_window, text="Test", state='normal', command=test_course)
