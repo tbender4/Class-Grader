@@ -59,6 +59,14 @@ class New_Course(simpledialog.Dialog):                   #inherit tkinter.simple
 
 class Section_Tree:   #table view
   def __init__(self, master, section=Course('MAC000', 'test_000').sectionList[0]):
+    # def add_student_section(self, last_name='test', first_name='name_man'):
+    #   print('adding student')
+    #   new_student = self.section.addStudent(last_name, first_name)
+    #   print(new_student)
+    #   student_id = new_student['student'].id
+    #   name = new_student['student'].last_first
+    #   self.section_tree.insert('', 'end', text=student_id, values=(name, 'n', 'o', 'p'))
+    
     print('generating section')
     #Have tabs for each section
     
@@ -122,10 +130,21 @@ def course_window(course_ID, course_name):
     print(window.winfo_width(), window.winfo_height())
 
   def add_new_section(notebook, course):
-    child = Section_Tree(notebook, course.addNewSection()).section_tree
+    frame = tkinter.Frame(notebook)
+    s_tree = Section_Tree(frame, course.addNewSection())
+    tree = s_tree.section_tree
+    tree.grid(row=0, columnspan=2)
+
+    add_student = tkinter.Button(
+        frame, text='Add Student', command=lambda: s_tree.add_student())
+    print_section = tkinter.Button(
+        frame, text='Print Section', command=lambda: s_tree.section.printSection())
+
+    add_student.grid(row=1, column=0)
+    print_section.grid(row=1, column=1)
+
     text = course.courseID + '-' + "{:02d}".format(course.sectionList[-1].sectionID)
-    
-    notebook.add(child=child, text=text)
+    notebook.add(child=frame, text=text)
     
   
   #generation of the course in question
@@ -134,7 +153,7 @@ def course_window(course_ID, course_name):
   course.printCourse()
 
   course_window=tkinter.Toplevel()
-  course_window.geometry('950x800')
+  course_window.geometry('540x400')
 
   #Menu Bar
   menu_bar = tkinter.Menu(course_window)
@@ -178,8 +197,12 @@ def course_window(course_ID, course_name):
                  command=lambda: add_new_section(sections_notebook, course))
   add_button.grid(column=1, row=1, sticky='W')
 
-  sections_notebook.grid(row=2, columnspan=2, sticky='se') #colspan is dirty button spacing fix
 
+  # colspan is dirty button spacing fix
+  sections_notebook.grid(row=2, columnspan=2, sticky='NS')
+
+  tkinter.Button(course_window, text='Print Course',
+                 command=course.printCourse).grid(row=3, sticky='w')
 
 
 
