@@ -21,7 +21,7 @@ This software is open source and is hosted on github.com/tbender4/Class-Grader""
 
     msg = tkinter.Message(about, text = description)
     msg.pack()
-    tkinter.Button(about, text="Close", command=about.destroy).pack()
+    tkinter.Button(about, text="Close", command=about.destroy)
 
     #size and location
     x = window.winfo_rootx()
@@ -54,8 +54,39 @@ class New_Course(simpledialog.Dialog):                   #inherit tkinter.simple
   def apply(self):
     print("apply hit")
     print(str(self.new_course_ID.get()))
-    self.parent.withdraw()
+    # self.parent.withdraw()
     course_window(self.new_course_ID.get().strip(), self.new_course_name.get().strip())
+
+
+class New_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
+  def __init__(self, parent):
+    # inherited constructor needs original window
+    super().__init__(parent, title="Enter Student Information:")
+
+  def body(self, master):
+
+    tkinter.Label(master, text="Last Name").grid(
+        column=0, row=0, sticky='w')
+    tkinter.Label(master, text="First Name:").grid(
+        column=0, row=1)
+    self.last_name_entry = tkinter.Entry(master)
+    self.first_name_entry = tkinter.Entry(master)
+
+    self.last_name_entry.grid(column=1, row=0)
+    self.first_name_entry.grid(column=1, row=1)
+
+    return None
+
+  def validate(self):
+    if self.last_name_entry.get().strip() == '' or self.first_name_entry.get().strip() == '':
+      return 0
+    return 1
+
+  def apply(self):
+    print("apply hit")
+
+    self.last_name = self.last_name_entry.get().strip()
+    self.first_name = self.first_name_entry.get().strip()
 
 class Section_Tree:   #table view
   def __init__(self, master, section=Course('MAC000', 'test_000').sectionList[0]):
@@ -96,7 +127,7 @@ class Section_Tree:   #table view
       student_ID = student_grade['student'].id
       student_name = student_grade['student'].last_first
       #b, c, and d, e should be attendances, homeworks, quizzes, exams
-      section_tree.insert('', 'end', text=student_ID, values=(student_name, 'b', 'c', 'd'))
+      section_tree.insert('', 'end', text=student_ID, values=(student_name, '', '', ''))
 
 
     section_tree.grid(row=0, column=0)
@@ -108,15 +139,92 @@ class Section_Tree:   #table view
 
     self.section_tree = section_tree
     self.section = section
+    self.master = master
   
   def add_student(self, last_name = 'test', first_name = 'name_man'):
+    new_student = New_Student(self.master)
+    last_name = new_student.last_name
+    first_name = new_student.first_name
     print('adding student')
     new_student = self.section.addStudent(last_name, first_name)
     print(new_student)
     student_id = new_student['student'].id
     name = new_student['student'].last_first
     self.section_tree.insert('', 'end', text=student_id, values=(name, 'n', 'o', 'p'))
-    
+
+  def edit_student(self):
+    focus = self.section_tree.focus()
+    student_tv = self.section_tree
+    new_student = Edit_Student(self.master)
+    last_first = new_student.last_name + ', ' + new_student.first_name
+    student_tv.item(focus, values=(last_first, 'b', 'c', 'd'))
+    print(self.section_tree.item(self.section_tree.focus()))
+
+
+class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
+  def __init__(self, parent):
+    # inherited constructor needs original window
+    super().__init__(parent, title="Edit Student Information:")
+
+  def body(self, master):
+
+    tkinter.Label(master, text="Last Name").grid(
+        column=0, row=0, sticky='e')
+    tkinter.Label(master, text="First Name:").grid(
+        column=0, row=1, sticky='e')
+    self.last_name_entry = tkinter.Entry(master)
+    self.first_name_entry = tkinter.Entry(master)
+
+    self.last_name_entry.grid(column=1, row=0)
+    self.first_name_entry.grid(column=1, row=1)
+
+    tkinter.Label(master, text="Attendance\n(0 for absent, 1 for present):").grid(row=2)
+    tkinter.Label(master, text="Homework:\n(from 0 - 100)").grid(row=2, column=1)
+    tkinter.Label(master, text="Quiz:\n(from 0 - 100)").grid(row=2, column=2)
+    tkinter.Label(master, text="Exam:\n(from 0 - 100)").grid(row=2, column=3)
+
+    att_entry = []
+    for i in range(3,10):
+      entry = tkinter.Entry(master)
+      entry.insert(0, '0')
+      entry.grid(row=i, column = 0)
+      att_entry.append(entry)
+
+    hw_entry = []
+    for i in range(3, 10):
+      entry = tkinter.Entry(master)
+      entry.insert(0, '0')
+      entry.grid(row=i, column=1)
+      hw_entry.append(entry)
+
+    quiz_entry = []
+    for i in range(3, 10):
+      entry = tkinter.Entry(master)
+      entry.insert(0, '0')
+      entry.grid(row=i, column=2)
+      quiz_entry.append(entry)
+
+
+    exam_entry = []
+    for i in range(3, 10):
+      entry = tkinter.Entry(master)
+      entry.insert(0, '0')
+      entry.grid(row=i, column=3)
+      exam_entry.append(entry)
+
+    return None
+
+  def validate(self):
+    if self.last_name_entry.get().strip() == '' or self.first_name_entry.get().strip() == '':
+      return 0
+    return 1
+
+  def apply(self):
+    print("apply hit")
+
+    self.last_name = self.last_name_entry.get().strip()
+    self.first_name = self.first_name_entry.get().strip()
+
 
 def new_course():
   New_Course(main_window)
@@ -132,16 +240,19 @@ def course_window(course_ID, course_name):
   def add_new_section(notebook, course):
     frame = tkinter.Frame(notebook)
     s_tree = Section_Tree(frame, course.addNewSection())
-    tree = s_tree.section_tree
+    tree = s_tree.section_tree  #actual tree widget
     tree.grid(row=0, columnspan=2)
 
     add_student = tkinter.Button(
         frame, text='Add Student', command=lambda: s_tree.add_student())
+
+    edit_student = tkinter.Button(frame, text = 'Edit Student', command=lambda: s_tree.edit_student())
+
     print_section = tkinter.Button(
         frame, text='Print Section', command=lambda: s_tree.section.printSection())
 
     add_student.grid(row=1, column=0)
-    print_section.grid(row=1, column=1)
+    edit_student.grid(row=1, column=1)
 
     text = course.courseID + '-' + "{:02d}".format(course.sectionList[-1].sectionID)
     notebook.add(child=frame, text=text)
@@ -182,10 +293,10 @@ def course_window(course_ID, course_name):
     section_tree.section_tree.grid(row=0, columnspan=2)
     sections_notebook.add(child=section_frame, text=course.courseID + '-' + "{:02d}".format(course.sectionList[-1].sectionID))
     add_student = tkinter.Button(section_frame, text='Add Student', command=lambda: section_tree.add_student())
-    print_section = tkinter.Button(
-        section_frame, text='PrintSection', command=lambda: section_tree.section.printSection())
+    edit_student = tkinter.Button(
+        section_frame, text='Edit Student ', command=lambda: section_tree.edit_student())
     add_student.grid(row=1, column=0)
-    print_section.grid(row=1, column = 1)
+    edit_student.grid(row=1, column = 1)
     
     
 

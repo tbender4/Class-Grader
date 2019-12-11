@@ -10,6 +10,8 @@ class Student:
         # self.grade = " "  # Grade appears as empty as default
         # Possible that much won't be added here
 
+    def updateLF(self):
+        self.last_first = self.last_name + ', ' + self.first_name
     def printStudent(self):
         print("Printing Student:  ID:", self.id, "Name:", self.last_name + ",", self.first_name)
 
