@@ -12,7 +12,7 @@ class Section:
             "exams": []              #Score()
         }
 
-    def __init__(self, sectionID):
+    def __init__(self, sectionID=66): #66 is for testing purposes only. should start at 01
         self.sectionID = sectionID
 
         self.student_grade_list = []  # array of students
@@ -46,13 +46,13 @@ class Section:
                 print(', ', end='')
         print("\n-----------")
 
-    def addStudent(self, last_name = "last_name", first_name = "first_name"):
+    def addStudentGrade(self, last_name = "last_name", first_name = "first_name"):
         #adding a student also adds a
-        lastStudent = self.student_grade_list[-1]
-        newID = lastStudent["student"].id+1
-        newStudent = self.student_grade_model(newID, last_name, first_name)
-        self.student_grade_list.append(newStudent)
-        return newStudent
+        lastStudentGrade = self.student_grade_list[-1]
+        newID = lastStudentGrade["student"].student_id+1
+        newStudentGrade = self.student_grade_model(newID, last_name, first_name)
+        self.student_grade_list.append(newStudentGrade)
+        return newStudentGrade
 
 
 

@@ -2,6 +2,7 @@ import tkinter
 from tkinter import ttk
 from tkinter import simpledialog
 from course import Course
+from section import Section
 
 class About_Modal:
   def __init__(self, window):
@@ -57,7 +58,6 @@ class New_Course(simpledialog.Dialog):                   #inherit tkinter.simple
     # self.parent.withdraw()
     course_window(self.new_course_ID.get().strip(), self.new_course_name.get().strip())
 
-
 class New_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
   def __init__(self, parent):
     # inherited constructor needs original window
@@ -88,8 +88,13 @@ class New_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
     self.last_name = self.last_name_entry.get().strip()
     self.first_name = self.first_name_entry.get().strip()
 
-class Section_Tree:   #table view
+class Section_Tree(ttk.Treeview):   #table view. possibly rewrite with inheritance
   def __init__(self, master, section=Course('MAC000', 'test_000').sectionList[0]):
+    # self.section_tree = section_tree
+    self.section = section
+    self.master = master
+    self.student_grade_list = self.section.student_grade_list
+    super().__init__(master)
     # def add_student_section(self, last_name='test', first_name='name_man'):
     #   print('adding student')
     #   new_student = self.section.addStudent(last_name, first_name)
@@ -97,75 +102,86 @@ class Section_Tree:   #table view
     #   student_id = new_student['student'].id
     #   name = new_student['student'].last_first
     #   self.section_tree.insert('', 'end', text=student_id, values=(name, 'n', 'o', 'p'))
-    
-    print('generating section')
-    #Have tabs for each section
-    
-    section_tree = ttk.Treeview(master)
+    # section_tree = ttk.Treeview(master)
 
     #Tree view
+
+    #formatting columns
     header_name_dict = {
-      # 'student_id':'ID',
-      'student_name':'Name',
-      'attendance':'Attendance',
-      'homework':'Homework',
-      'quiz':'Quiz',
-      'exam':'Exam'
+        # 'student_id':'ID',
+        'student_name': 'Name',
+        'attendance': 'Attendance',
+        'homework': 'Homework',
+        'quiz': 'Quiz',
+        'exam': 'Exam'
     }
-    section_tree['columns'] = list(header_name_dict.keys())
+    self['columns'] = list(header_name_dict.keys())
     for key, value in header_name_dict.items():
-      section_tree.column(key, width=50)
-      section_tree.heading(key, text=value)
-    section_tree.heading('#0', text='ID')  #ID pertains to student ID
-    section_tree.column('#0', width=40)     
-    section_tree.column('attendance', width=70)
-    section_tree.column('homework', width=70)
-    section_tree.column('student_name', width=180)
+      self.column(key, width=50)
+      self.heading(key, text=value)
+    self.heading('#0', text='ID')  #ID pertains to student ID
+    self.column('#0', width=40)     
+    self.column('attendance', width=70)
+    self.column('homework', width=70)
+    self.column('student_name', width=180)
 
-    #inserting student to tree
-    for student_grade in section.student_grade_list:
-      student_ID = student_grade['student'].id
-      student_name = student_grade['student'].last_first
+    #inserting existing values from section
+    for student_grade in self.student_grade_list:
+      a, b, text, values = self.gen_child(student_grade) 
       #b, c, and d, e should be attendances, homeworks, quizzes, exams
-      section_tree.insert('', 'end', text=student_ID, values=(student_name, '', '', ''))
+      self.insert(a, b, text=text, values=values)
 
 
-    section_tree.grid(row=0, column=0)
+  def gen_child(self, student_grade, last_name = None, first_name = None):
+    print(student_grade)
 
-    #scrollbar
-    # scroll = ttk.Scrollbar(section_tree, orient=tkinter.HORIZONTAL, command=section_tree.yview)
-    # section_tree.configure(yscrollcommand=scroll.set)
-    # scroll.grid(row=1, column=0)
+    student_ID = student_grade['student'].student_id
+    student_last = student_grade['student'].last_name
+    student_first = student_grade['student'].first_name
+    student_last_first = student_grade['student'].last_first
+    #if options are provided, overwrite info with given info (should reflect in data as well)
+    if last_name != None and first_name != None:
+      student_last = last_name
+      student_first = first_name
+      student_grade['student'].updateLF()
+      student_last_first = student_grade['student'].last_first # possibly redundant
 
-    self.section_tree = section_tree
-    self.section = section
-    self.master = master
+    return ('', 'end', student_ID, (student_last_first , 'a', 'b', 'c', 'd'))
   
   def add_student(self, last_name = 'test', first_name = 'name_man'):
-    new_student = New_Student(self.master)
+    # first gets the info. Then adds it to the section. then inserts the data into the tree.
+    # it's possible that the data may be reconstructed. so it's properly synced (need to decide best route)
+
+    # new_student = New_Student(self.master)
+    new_student = New_Student(self)
+
     last_name = new_student.last_name
     first_name = new_student.first_name
-    print('adding student')
-    new_student = self.section.addStudent(last_name, first_name)
-    print(new_student)
-    student_id = new_student['student'].id
-    name = new_student['student'].last_first
-    self.section_tree.insert('', 'end', text=student_id, values=(name, 'n', 'o', 'p'))
+    print('adding student:', last_name, first_name)
+    new_student_grade = self.section.addStudentGrade(last_name, first_name)  #this adds a student_grade, not Student
+    print(new_student_grade)
+
+    a, b, text, values = self.gen_child(new_student_grade, last_name, first_name)
+    self.insert(a, b, text=text, values=values)
 
   def edit_student(self):
-    focus = self.section_tree.focus()
+    # TODO: Have the whole student_grade be stored as a hidden value
+
+    focus = self.focus()
     # print(focus[]
-    student_tv = self.section_tree
-    l_f = student_tv.item(focus)['values'][0].split(",")
+
+    #this is dirty. doesn't save information properly
+    #Having the student as an argument would be best student would be best
+    l_f = self.item(focus)['values'][0].split(",")
     last = l_f[0]
     first = l_f[1]
     print('test', l_f)
 
+
     new_student = Edit_Student(self.master, last, first)
     last_first = new_student.last_name + ', ' + new_student.first_name
-    student_tv.item(focus, values=(last_first, new_student.att_avg, new_student.hw_avg, new_student.exam_avg, new_student.quiz_avg))
-    print(self.section_tree.item(self.section_tree.focus()))
-
+    self.item(focus, values=(last_first, new_student.att_avg, new_student.hw_avg, new_student.exam_avg, new_student.quiz_avg))
+    print(self.item(self.focus()))
 
 class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
   def __init__(self, parent, last_name='l', first_name='f'):
@@ -280,7 +296,28 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
       exam_sum += int(i.get().strip()) / 100
     self.exam_avg = str(round(exam_sum / len(self.exam_entry) * 100, 2))+"%"
 
-    
+class Section_Frame(tkinter.Frame):
+  # ---------------------
+  #   ----------------
+  #   |              |
+  #   |     Tree     |
+  #   |              |
+  #   ----------------
+  #     |add| |edit|
+  # 
+  # ---------------------
+
+  def __init__(self, master, section = Section()):
+    super().__init__(master)
+    section_tree = tkinter.Label(self, text='Tree here')  #Replace this with Section_Tree
+    add_button = tkinter.Button(self, text='Add Student')
+    edit_button = tkinter.Button(self, text='Edit Student')
+
+    section_tree.grid(row=0,columnspan=2)
+    add_button.grid(row=1, column = 0)
+    edit_button.grid(row=1, column=1)
+    # tkinter.Label(self, text='Custom frame').grid(row=0)
+
 
 def new_course():
   New_Course(main_window)
@@ -294,9 +331,10 @@ def course_window(course_ID, course_name):
     print(window.winfo_width(), window.winfo_height())
 
   def add_new_section(notebook, course):
+    s_frame = Section_Frame(notebook, course.addNewSection())
     frame = tkinter.Frame(notebook)
     s_tree = Section_Tree(frame, course.addNewSection())
-    tree = s_tree.section_tree  #actual tree widget
+    tree = s_tree  #actual tree widget
     tree.grid(row=0, columnspan=2)
 
     add_student = tkinter.Button(
@@ -311,7 +349,8 @@ def course_window(course_ID, course_name):
     edit_student.grid(row=1, column=1)
 
     text = course.courseID + '-' + "{:02d}".format(course.sectionList[-1].sectionID)
-    notebook.add(child=frame, text=text)
+    # notebook.add(child=frame, text=text)
+    notebook.add(child=s_frame, text=text)
     
   
   #generation of the course in question
@@ -343,10 +382,12 @@ def course_window(course_ID, course_name):
 
   #Have tabs for each section 
   #Generate tables from current list
+
+  #perhaps pass through the whole section
   for section in course.sectionList:
     section_frame = tkinter.Frame(sections_notebook)
     section_tree = Section_Tree(section_frame, section)
-    section_tree.section_tree.grid(row=0, columnspan=2)
+    section_tree.grid(row=0, columnspan=2)
     sections_notebook.add(child=section_frame, text=course.courseID + '-' + "{:02d}".format(course.sectionList[-1].sectionID))
     add_student = tkinter.Button(section_frame, text='Add Student', command=lambda: section_tree.add_student())
     edit_student = tkinter.Button(
@@ -382,6 +423,9 @@ new_course_button.grid(column=0, row=0)
 test_course_button.grid(column=0, row=1)
 label = tkinter.Label(main_window, text='Create a new course')
 label.grid(column=1, row=0)
+
+testLabel = Section_Frame(main_window)
+testLabel.grid(row=2)
 
 # test_button = tkinter.Button(main_window, text="test", state='normal', command=new_course)
 # test_button.grid(column=0, row=1)
