@@ -307,11 +307,24 @@ class Section_Frame(tkinter.Frame):
   # 
   # ---------------------
 
+    # for section in course.sectionList:
+    # section_frame = tkinter.Frame(sections_notebook)
+    # section_tree = Section_Tree(section_frame, section)
+    # section_tree.grid(row=0, columnspan=2)
+    # sections_notebook.add(child=section_frame, text=course.courseID +
+    #                       '-' + "{:02d}".format(course.sectionList[-1].sectionID))
+    # add_student = tkinter.Button(
+    #     section_frame, text='Add Student', command=lambda: section_tree.add_student())
+    # edit_student = tkinter.Button(
+    #     section_frame, text='Edit Student ', command=lambda: section_tree.edit_student())
+    # add_student.grid(row=1, column=0)
+    # edit_student.grid(row=1, column=1)
+
   def __init__(self, master, section = Section()):
     super().__init__(master)
-    section_tree = tkinter.Label(self, text='Tree here')  #Replace this with Section_Tree
-    add_button = tkinter.Button(self, text='Add Student')
-    edit_button = tkinter.Button(self, text='Edit Student')
+    section_tree = Section_Tree(self, section) 
+    add_button = tkinter.Button(self, text='Add Student', command = section_tree.add_student)
+    edit_button = tkinter.Button(self, text='Edit Student', command = section_tree.edit_student)
 
     section_tree.grid(row=0,columnspan=2)
     add_button.grid(row=1, column = 0)
@@ -385,15 +398,16 @@ def course_window(course_ID, course_name):
 
   #perhaps pass through the whole section
   for section in course.sectionList:
-    section_frame = tkinter.Frame(sections_notebook)
-    section_tree = Section_Tree(section_frame, section)
-    section_tree.grid(row=0, columnspan=2)
+    # section_frame = tkinter.Frame(sections_notebook)
+    section_frame = Section_Frame(sections_notebook, section)
+    # section_tree = Section_Tree(section_frame, section)
+    # section_tree.grid(row=0, columnspan=2)
     sections_notebook.add(child=section_frame, text=course.courseID + '-' + "{:02d}".format(course.sectionList[-1].sectionID))
-    add_student = tkinter.Button(section_frame, text='Add Student', command=lambda: section_tree.add_student())
-    edit_student = tkinter.Button(
-        section_frame, text='Edit Student ', command=lambda: section_tree.edit_student())
-    add_student.grid(row=1, column=0)
-    edit_student.grid(row=1, column = 1)
+    # add_student = tkinter.Button(section_frame, text='Add Student', command=lambda: section_tree.add_student())
+    # edit_student = tkinter.Button(
+        # section_frame, text='Edit Student ', command=lambda: section_tree.edit_student())
+    # add_student.grid(row=1, column=0)
+    # edit_student.grid(row=1, column = 1)
     
     
 
