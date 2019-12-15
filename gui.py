@@ -95,14 +95,7 @@ class Section_Tree(ttk.Treeview):   #table view. possibly rewrite with inheritan
     self.master = master
     self.student_grade_list = self.section.student_grade_list
     super().__init__(master)
-    # def add_student_section(self, last_name='test', first_name='name_man'):
-    #   print('adding student')
-    #   new_student = self.section.addStudent(last_name, first_name)
-    #   print(new_student)
-    #   student_id = new_student['student'].id
-    #   name = new_student['student'].last_first
-    #   self.section_tree.insert('', 'end', text=student_id, values=(name, 'n', 'o', 'p'))
-    # section_tree = ttk.Treeview(master)
+
 
     #Tree view
 
@@ -133,19 +126,17 @@ class Section_Tree(ttk.Treeview):   #table view. possibly rewrite with inheritan
 
 
   def gen_child(self, student_grade, last_name = None, first_name = None):
-    print(student_grade)
 
+    #if options are provided, overwrite info with given info (should reflect in data as well)
+    if last_name != None and first_name != None:
+      student_grade['student'].last_name = last_name
+      student_grade['student'].first_name = first_name
+      student_grade['student'].updateLF()
     student_ID = student_grade['student'].student_id
     student_last = student_grade['student'].last_name
     student_first = student_grade['student'].first_name
     student_last_first = student_grade['student'].last_first
-    #if options are provided, overwrite info with given info (should reflect in data as well)
-    if last_name != None and first_name != None:
-      student_last = last_name
-      student_first = first_name
-      student_grade['student'].updateLF()
-      student_last_first = student_grade['student'].last_first # possibly redundant
-
+    
     return ('', 'end', student_ID, (student_last_first , 'a', 'b', 'c', 'd'))
   
   def add_student(self, last_name = 'test', first_name = 'name_man'):
@@ -307,19 +298,6 @@ class Section_Frame(tkinter.Frame):
   # 
   # ---------------------
 
-    # for section in course.sectionList:
-    # section_frame = tkinter.Frame(sections_notebook)
-    # section_tree = Section_Tree(section_frame, section)
-    # section_tree.grid(row=0, columnspan=2)
-    # sections_notebook.add(child=section_frame, text=course.courseID +
-    #                       '-' + "{:02d}".format(course.sectionList[-1].sectionID))
-    # add_student = tkinter.Button(
-    #     section_frame, text='Add Student', command=lambda: section_tree.add_student())
-    # edit_student = tkinter.Button(
-    #     section_frame, text='Edit Student ', command=lambda: section_tree.edit_student())
-    # add_student.grid(row=1, column=0)
-    # edit_student.grid(row=1, column=1)
-
   def __init__(self, master, section = Section()):
     super().__init__(master)
     section_tree = Section_Tree(self, section) 
@@ -345,26 +323,10 @@ def course_window(course_ID, course_name):
 
   def add_new_section(notebook, course):
     s_frame = Section_Frame(notebook, course.addNewSection())
-    frame = tkinter.Frame(notebook)
-    s_tree = Section_Tree(frame, course.addNewSection())
-    tree = s_tree  #actual tree widget
-    tree.grid(row=0, columnspan=2)
-
-    add_student = tkinter.Button(
-        frame, text='Add Student', command=lambda: s_tree.add_student())
-
-    edit_student = tkinter.Button(frame, text = 'Edit Student', command=lambda: s_tree.edit_student())
-
-    print_section = tkinter.Button(
-        frame, text='Print Section', command=lambda: s_tree.section.printSection())
-
-    add_student.grid(row=1, column=0)
-    edit_student.grid(row=1, column=1)
 
     text = course.courseID + '-' + "{:02d}".format(course.sectionList[-1].sectionID)
     # notebook.add(child=frame, text=text)
     notebook.add(child=s_frame, text=text)
-    
   
   #generation of the course in question
   #TODO show more than one course in the GUI at the same time
@@ -389,28 +351,14 @@ def course_window(course_ID, course_name):
   #window elements with course:
   tkinter.Label(course_window, text = course.courseID + ' - ' + course_name, font=(None, 16)).grid(sticky='W', row=0, column= 0)
 
-
-  #display all of the section info
   sections_notebook = ttk.Notebook(master=course_window)
 
-  #Have tabs for each section 
   #Generate tables from current list
 
-  #perhaps pass through the whole section
   for section in course.sectionList:
-    # section_frame = tkinter.Frame(sections_notebook)
     section_frame = Section_Frame(sections_notebook, section)
-    # section_tree = Section_Tree(section_frame, section)
-    # section_tree.grid(row=0, columnspan=2)
     sections_notebook.add(child=section_frame, text=course.courseID + '-' + "{:02d}".format(course.sectionList[-1].sectionID))
-    # add_student = tkinter.Button(section_frame, text='Add Student', command=lambda: section_tree.add_student())
-    # edit_student = tkinter.Button(
-        # section_frame, text='Edit Student ', command=lambda: section_tree.edit_student())
-    # add_student.grid(row=1, column=0)
-    # edit_student.grid(row=1, column = 1)
     
-    
-
 
   #placing course_window grid
   tkinter.Button(course_window, text="Report size",
@@ -438,8 +386,6 @@ test_course_button.grid(column=0, row=1)
 label = tkinter.Label(main_window, text='Create a new course')
 label.grid(column=1, row=0)
 
-testLabel = Section_Frame(main_window)
-testLabel.grid(row=2)
 
 # test_button = tkinter.Button(main_window, text="test", state='normal', command=new_course)
 # test_button.grid(column=0, row=1)

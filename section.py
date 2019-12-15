@@ -40,10 +40,11 @@ class Section:
             for quiz in student_grade["quizzes"]:
                 quiz.printScore()
                 print(', ', end='')
-            print('\nExams: ', end='')
+            print('\nExams:', end='')
             for exam in student_grade["exams"]:
                 exam.printScore()
                 print(', ', end='')
+            print()
         print("\n-----------")
 
     def addStudentGrade(self, last_name = "last_name", first_name = "first_name"):
