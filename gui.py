@@ -1,11 +1,15 @@
 import tkinter
 from tkinter import ttk
 from tkinter import simpledialog
+from tkinter import messagebox
 from course import Course
 from section import Section
 
-class About_Modal:
-  def __init__(self, window):
+class About_Dialog(simpledialog.Dialog):
+  def __init__(self, parent, title="Class Grader"):
+    super().__init__(parent, title=title)
+  
+  def body (self, master):
     description ="""
 Class Grader is a college Python project
 demonstrating I/O, classes, data structures, matplotlib, and tkinter.
@@ -14,27 +18,27 @@ demonstrating I/O, classes, data structures, matplotlib, and tkinter.
   Contact: tbender4@gmail.com
 
 This software is open source and is hosted on github.com/tbender4/Class-Grader"""
+    tkinter.Label(master, text=description).grid(column=0, row=0)
+    return master
+    
 
-    about = tkinter.Toplevel(master=window)
-    about.title("Class Grader")
-    # about.transient(preceding_window)   # Center original window
-    #about.grab_set()                    # Modal
+  def buttonbox(self):
+    # Similar to stock but only a close button
+    box = tkinter.Frame(self)
+    w = tkinter.Button(box, text="Close", width=10, command=self.cancel)
+    w.pack(side=tkinter.LEFT, padx=5, pady=5)
+    self.bind("<Return>", self.ok)
+    self.bind("<Escape>", self.cancel)
+    box.pack()
 
-    msg = tkinter.Message(about, text = description)
-    msg.pack()
-    tkinter.Button(about, text="Close", command=about.destroy)
-
-    #size and location
-    x = window.winfo_rootx()
-    y = window.winfo_rooty()
-    about.geometry('280x200+%d+%d' % (x,y))
-    about.resizable(False, False)
-    about.transient(window) #makes this a temporary button
-    about.grab_set()
+  
 
 class New_Course(simpledialog.Dialog):                   #inherit tkinter.simpledialog
   def __init__(self, parent):
+    self.new_course_ID = ""
+    self.new_course_name = ""
     super().__init__(parent, title="Enter Course Information:")      #inherited constructor needs original window
+
 
   def body(self, master):
 
@@ -52,10 +56,13 @@ class New_Course(simpledialog.Dialog):                   #inherit tkinter.simple
     if self.new_course_ID.get().strip() == '' or self.new_course_name.get().strip() == '':
       return 0
     return 1
+
   def apply(self):
     print("apply hit")
     print(str(self.new_course_ID.get()))
-    # self.parent.withdraw()
+    # self.parent.withdraw()  
+    # TODO: Save this to the actual course data. Then draw window.
+
     course_window(self.new_course_ID.get().strip(), self.new_course_name.get().strip())
 
 class New_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
@@ -339,11 +346,13 @@ def course_window(course_ID, course_name):
   #Menu Bar
   menu_bar = tkinter.Menu(course_window)
   file_menu = tkinter.Menu(menu_bar, tearoff=0)
+  file_menu.add_command(label="Save", command=course.writeToFile)
   file_menu.add_separator()
   file_menu.add_command(label="Exit", command=main_window.destroy)
   menu_bar.add_cascade(label="File", menu=file_menu)
+
   help_menu = tkinter.Menu(menu_bar, tearoff=0)
-  help_menu.add_command(label="About", command=lambda: About_Modal(course_window))    #lamba fixes arguments
+  help_menu.add_command(label="About", command=lambda: About_Dialog(course_window))    #lamba fixes arguments
   menu_bar.add_cascade(label="Help", menu=help_menu)
   course_window.config(menu=menu_bar)
   
@@ -352,13 +361,12 @@ def course_window(course_ID, course_name):
   tkinter.Label(course_window, text = course.courseID + ' - ' + course_name, font=(None, 16)).grid(sticky='W', row=0, column= 0)
 
   sections_notebook = ttk.Notebook(master=course_window)
-
+  sections_notebook.grid(row=2, columnspan=2, sticky='NS')    # colspan is dirty button spacing fix
+  
   #Generate tables from current list
-
   for section in course.sectionList:
     section_frame = Section_Frame(sections_notebook, section)
     sections_notebook.add(child=section_frame, text=course.courseID + '-' + "{:02d}".format(course.sectionList[-1].sectionID))
-    
 
   #placing course_window grid
   tkinter.Button(course_window, text="Report size",
@@ -366,10 +374,6 @@ def course_window(course_ID, course_name):
   add_button = tkinter.Button(course_window, text="Add Section",
                  command=lambda: add_new_section(sections_notebook, course))
   add_button.grid(column=1, row=1, sticky='W')
-
-
-  # colspan is dirty button spacing fix
-  sections_notebook.grid(row=2, columnspan=2, sticky='NS')
 
   tkinter.Button(course_window, text='Print Course',
                  command=course.printCourse).grid(row=3, sticky='w')

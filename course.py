@@ -1,7 +1,13 @@
 # import grading
+import json
 import section
+import os
+
 
 class Course:
+
+    __keys  = [ "courseID", "name", "sectionList"]
+
     def __init__(self, courseID, name = ""):
         self.name = name
         if name == "":
@@ -11,9 +17,22 @@ class Course:
         self.sectionList = []
         self.sectionList.append(initialSection)
 
+    def writeToFile(self):
+        localdir = os.path.dirname(__file__)
+        datapath = os.path.join(localdir, 'saved', '{}.json'.format(self.courseID))
+        
+        sections = [s.section_dict() for s in self.sectionList]
+        course_dict = {
+            "courseID" : self.courseID,
+            "name" : self.name,
+            "sectionList" : sections
+        }
+        with open(datapath, 'w') as json_file:
+            json.dump(course_dict, json_file)
+
 
     def addNewSection(self):
-        newSection = section.Section(self.sectionList[-1].getSectionID()+1) #quick generation of ID
+        newSection = section.Section((self.sectionList[-1].sectionID)+1) #quick generation of ID
         self.sectionList.append(newSection)
         return self.sectionList[-1] #returns back added section for use in GUI
     

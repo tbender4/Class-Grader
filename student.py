@@ -15,3 +15,10 @@ class Student:
     def printStudent(self):
         print("Printing Student:  ID:", self.student_id, "Name:", self.last_name + ",", self.first_name)
 
+    def student_dict(self):
+        return {
+            "student_id" : self.student_id,
+            "first_name" : self.first_name,
+            "last_name" : self.last_name,
+            "last_first" : self.last_first
+        }

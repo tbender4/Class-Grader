@@ -19,9 +19,28 @@ class Section:
         self.student_grade_list.append(self.student_grade_model(0))
         
 
+    def section_dict(self): #returns itself as dict format
+        students = []
+        for student_grade in self.student_grade_list:
+            
+            attendances = [attendance.day_status for attendance in student_grade["attendances"]]
+            homeworks = [homework.score_dict() for homework in student_grade["homeworks"]]
+            quizzes = [quiz.score_dict() for quiz in student_grade["quizzes"]]
+            exams = [exam.score_dict() for exam in student_grade["exams"]]
+            #converts all to safe formats for json
 
-    def getSectionID(self):
-        return self.sectionID
+            students.append( {
+                "student" : student_grade.get("student").student_dict(),
+                "attendances":student_grade["attendances"],
+                "homeworks":student_grade["homeworks"],
+                "quizzes":student_grade["quizzes"],
+                "exams":student_grade["exams"],
+                # TODO: Need to write dict output functions for Score, Attendance
+                }
+            )
+        return {
+            self.sectionID : students
+        }
 
     def printSection(self):
         print("-----------")

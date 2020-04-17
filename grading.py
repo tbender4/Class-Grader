@@ -11,6 +11,13 @@ class Score:
         self.curve_grade = score_grade
         self.use_curve = use_curve
 
+    def score_dict(self):
+        return {
+            "raw" : self.score_grade,
+            "curve" : self.curve_grade,
+            "use_curve" : self.use_curve
+        }
+
     def printScore(self):
         print("Raw:", self.score_grade, "Curve", self.curve_grade, "Using Curve:",self.use_curve,end='')
 
@@ -51,7 +58,6 @@ class Attendance:
 
     def edit_day(self, day_status):
         day_status = day_status
-
 
     def printAttendance(self):
         print(self.day_status, end='')
