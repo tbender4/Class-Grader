@@ -341,7 +341,7 @@ def course_window(course_ID, course_name):
   course.printCourse()
 
   course_window=tkinter.Toplevel()
-  course_window.geometry('540x400')
+  #course_window.geometry('540x400')
 
   #Menu Bar
   menu_bar = tkinter.Menu(course_window)
@@ -381,7 +381,7 @@ def course_window(course_ID, course_name):
 
 main_window = tkinter.Tk()
 main_window.title("Class Grader")
-main_window.geometry('400x300')
+#main_window.geometry('400x300')
 
 new_course_button = tkinter.Button(main_window, text="New", state='normal', command=new_course)
 test_course_button = tkinter.Button(main_window, text="Test", state='normal', command=test_course)

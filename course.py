@@ -21,14 +21,17 @@ class Course:
         localdir = os.path.dirname(__file__)
         datapath = os.path.join(localdir, 'saved', '{}.json'.format(self.courseID))
         
-        sections = [s.section_dict() for s in self.sectionList]
+        sections = {}
+        for s in self.sectionList:
+            sections.update(s.section_dict())
+        # sections = [s.section_dict() for s in self.sectionList]
         course_dict = {
             "courseID" : self.courseID,
             "name" : self.name,
             "sectionList" : sections
         }
         with open(datapath, 'w') as json_file:
-            json.dump(course_dict, json_file)
+            json.dump(course_dict, json_file, indent=2)
 
 
     def addNewSection(self):
