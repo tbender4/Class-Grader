@@ -35,7 +35,7 @@ class Section:
                 "homeworks":student_grade["homeworks"],
                 "quizzes":student_grade["quizzes"],
                 "exams":student_grade["exams"],
-                # TODO: Need to write dict output functions for Score, Attendance
+                # TODO: Need to write dict output functions for Score, Attendances
                 }
             )
         return {
@@ -67,12 +67,16 @@ class Section:
         print("\n-----------")
 
     def addStudentGrade(self, last_name = "last_name", first_name = "first_name"):
-        #adding a student also adds a
         lastStudentGrade = self.student_grade_list[-1]
         newID = lastStudentGrade["student"].student_id+1
         newStudentGrade = self.student_grade_model(newID, last_name, first_name)
         self.student_grade_list.append(newStudentGrade)
         return newStudentGrade
+
+    def editStudentGrade(self, **kwargs):
+        
+        return
+
 
 
 

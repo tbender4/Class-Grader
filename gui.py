@@ -65,7 +65,7 @@ class New_Course(simpledialog.Dialog):                   #inherit tkinter.simple
 
     course_window(self.new_course_ID.get().strip(), self.new_course_name.get().strip())
 
-class New_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
+class New_Student_Dialog(simpledialog.Dialog):  # inherit tkinter.simpledialog
   def __init__(self, parent):
     # inherited constructor needs original window
     super().__init__(parent, title="Enter Student Information:")
@@ -96,6 +96,7 @@ class New_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
     self.first_name = self.first_name_entry.get().strip()
 
 class Section_Tree(ttk.Treeview):   #table view. possibly rewrite with inheritance
+
   def __init__(self, master, section=Course('MAC000', 'test_000').sectionList[0]):
     # self.section_tree = section_tree
     self.section = section
@@ -125,11 +126,20 @@ class Section_Tree(ttk.Treeview):   #table view. possibly rewrite with inheritan
     self.column('homework', width=70)
     self.column('student_name', width=180)
 
+    self.tree_student_dict = {}
+    # insertion_ID : student_grade
+    # insertion_ID is focusable. This syncs the insertionID with the student data
+    #
+
     #inserting existing values from section
     for student_grade in self.student_grade_list:
       a, b, text, values = self.gen_child(student_grade) 
       #b, c, and d, e should be attendances, homeworks, quizzes, exams
-      self.insert(a, b, text=text, values=values)
+      insertion_ID = self.insert(a, b, text=text, values=values)
+      self.tree_student_dict.update({insertion_ID : student_grade})
+
+
+
 
 
   def gen_child(self, student_grade, last_name = None, first_name = None):
@@ -151,41 +161,52 @@ class Section_Tree(ttk.Treeview):   #table view. possibly rewrite with inheritan
     # it's possible that the data may be reconstructed. so it's properly synced (need to decide best route)
 
     # new_student = New_Student(self.master)
-    new_student = New_Student(self)
+    new_student = New_Student_Dialog(self)
 
     last_name = new_student.last_name
     first_name = new_student.first_name
     print('adding student:', last_name, first_name)
     new_student_grade = self.section.addStudentGrade(last_name, first_name)  #this adds a student_grade, not Student
-    print(new_student_grade)
-
+    
     a, b, text, values = self.gen_child(new_student_grade, last_name, first_name)
-    self.insert(a, b, text=text, values=values)
+
+    insertion_ID = self.insert(a, b, text=text, values=values)
+    self.tree_student_dict.update({insertion_ID : new_student_grade})
+
 
   def edit_student(self):
     # TODO: Have the whole student_grade be stored as a hidden value
 
-    focus = self.focus()
+    focus = self.focus()  #gets the item ID. need to put into self.item to be usable
+    print("printing focus: "+ focus)
+    student_grade = self.tree_student_dict[focus]
+    last = student_grade['student'].last_name
+    first = student_grade['student'].first_name
     # print(focus[]
-
     #this is dirty. doesn't save information properly
     #Having the student as an argument would be best student would be best
-    l_f = self.item(focus)['values'][0].split(",")
-    last = l_f[0]
-    first = l_f[1]
-    print('test', l_f)
+    # l_f = self.item(focus)['values'][0].split(",")
+    # last = l_f[0]
+    # first = l_f[1]
+    # print('test', l_f)
 
+    # UPDATE 04/23/20: It syncs properly now! Using tree_student_dict!!
 
-    new_student = Edit_Student(self.master, last, first)
+    #new_student = Edit_Student(self.master, last, first)
+    new_student = Edit_Student(self.master, student_grade)  #passes in existing student_grade
+    student_grade['student'].last_name = new_student.last_name
+    student_grade['student'].first_name = new_student.first_name
+
     last_first = new_student.last_name + ', ' + new_student.first_name
     self.item(focus, values=(last_first, new_student.att_avg, new_student.hw_avg, new_student.exam_avg, new_student.quiz_avg))
     print(self.item(self.focus()))
 
 class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
-  def __init__(self, parent, last_name='l', first_name='f'):
+  def __init__(self, parent, student_grade):
     # inherited constructor needs original window
-    self.last_name = last_name
-    self.first_name = first_name
+    self.student_grade = student_grade
+    self.last_name = self.student_grade['student'].last_name
+    self.first_name = self.student_grade['student'].first_name
     super().__init__(parent, title="Edit Student Information:")
 
   def body(self, master):
@@ -209,9 +230,10 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
     tkinter.Label(master, text="Exam:\n(from 0 - 100)").grid(row=2, column=3)
 
     self.att_entry = []
-    for i in range(3,15):
+    
+    for i, attendance in enumerate([1, 2, 3, 4, 5], start=3):
       entry = tkinter.Entry(master)
-      entry.insert(0, '0')
+      entry.insert(0, attendance)
       entry.grid(row=i, column = 0)
       self.att_entry.append(entry)
 
