@@ -1,4 +1,5 @@
 import math
+import datetime
 
 class Score:
     # def __init__(self):
@@ -52,15 +53,17 @@ class Score:
 
 class Attendance:
 	# status numbers: -1 = unknown, 0 = absent, 1 = present, 2 = late
-    
-    def __init__(self, day_status=-1):
+    #
+    def __init__(self, day_status=-1, date = datetime.datetime.now()):
         self.day_status = day_status
+        self.date = date
+        self.printAttendance()
 
     def edit_day(self, day_status):
-        day_status = day_status
+        self.day_status = day_status
 
     def printAttendance(self):
-        print(self.day_status, end='')
+        print(self.day_status, self.date.today(), end='')
 
     @staticmethod
     def attendance_generate_grade(attendance=[-1], free_miss_days=0, have_max_missed_days=False, max_missed_days=6, late_convert_to_absence=False, late_penalty=0.5):

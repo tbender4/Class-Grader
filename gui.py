@@ -10,6 +10,7 @@ class About_Dialog(simpledialog.Dialog):
     super().__init__(parent, title=title)
   
   def body (self, master):
+
     description ="""
 Class Grader is a college Python project
 demonstrating I/O, classes, data structures, matplotlib, and tkinter.
@@ -18,6 +19,7 @@ demonstrating I/O, classes, data structures, matplotlib, and tkinter.
   Contact: tbender4@gmail.com
 
 This software is open source and is hosted on github.com/tbender4/Class-Grader"""
+
     tkinter.Label(master, text=description).grid(column=0, row=0)
     return master
     
@@ -175,7 +177,7 @@ class Section_Tree(ttk.Treeview):   #table view. possibly rewrite with inheritan
 
 
   def edit_student(self):
-    # TODO: Have the whole student_grade be stored as a hidden value
+    # TODO: Merge this with the Edit_Student class so the code is cleaner
 
     focus = self.focus()  #gets the item ID. need to put into self.item to be usable
     print("printing focus: "+ focus)
@@ -193,7 +195,9 @@ class Section_Tree(ttk.Treeview):   #table view. possibly rewrite with inheritan
     # UPDATE 04/23/20: It syncs properly now! Using tree_student_dict!!
 
     #new_student = Edit_Student(self.master, last, first)
-    new_student = Edit_Student(self.master, student_grade)  #passes in existing student_grade
+    new_student = Edit_Student(self.master, student_grade, self.section)  #passes in existing student_grade
+    #section is passed through to utilize the section's template of attendances.
+    #will later implement the score related information
     student_grade['student'].last_name = new_student.last_name
     student_grade['student'].first_name = new_student.first_name
 
@@ -202,6 +206,10 @@ class Section_Tree(ttk.Treeview):   #table view. possibly rewrite with inheritan
     print(self.item(self.focus()))
 
 class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
+  class Attendance_Tree(ttk.Treeview):
+    def __init__ (self, master, student_grade):
+      super().__init__(master)
+
   def __init__(self, parent, student_grade):
     # inherited constructor needs original window
     self.student_grade = student_grade
@@ -210,6 +218,13 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
     super().__init__(parent, title="Edit Student Information:")
 
   def body(self, master):
+    def addEntry(last_i, att_entry, button):
+      print("inside", last_i)
+      entry=tkinter.Entry(master)
+      entry.insert(0, 'new')
+      entry.grid(row=last_i, column=0)
+      att_entry.append(entry)
+      button.grid(row=last_i+1, column = 0)
 
     tkinter.Label(master, text="Last Name").grid(
         column=0, row=0, sticky='e')
@@ -230,12 +245,17 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
     tkinter.Label(master, text="Exam:\n(from 0 - 100)").grid(row=2, column=3)
 
     self.att_entry = []
-    
+    attendance_tree = self.Attendance_Tree(master, self.student_grade)
+
     for i, attendance in enumerate([1, 2, 3, 4, 5], start=3):
       entry = tkinter.Entry(master)
       entry.insert(0, attendance)
       entry.grid(row=i, column = 0)
       self.att_entry.append(entry)
+    print("outside:", i)
+    last_i = i
+    button = tkinter.Button(master, text="Add new attendance", command=lambda: addEntry(last_i+1, self.att_entry, button))
+    button.grid(row=last_i+1, column=0)
 
     self.hw_entry = []
     for i in range(3, 15):
