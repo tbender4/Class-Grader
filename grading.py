@@ -1,6 +1,18 @@
 import math
 import datetime
 
+attendance_date_template = []
+
+#TODO: 5/28: It may be easier if I just ask for dates to be created upon initialization and not have change.
+#We can start with asking frequency of the class and then add another code for "Not counted" date.
+
+def attendance_date_range_dryrun(from_date_str, to_date_str, checkmark_list):
+    #date: mm/dd/yy
+    #TODO: Need to sanitize
+    from_date = datetime.datetime.strptime(date_string=from_date_str, format='%m/%d/%y')
+    to_date = datetime.datetime.strptime(date_string=to_date_str, format='%m/%d/%y')
+    
+    return True, "Output"
 class Score:
     # def __init__(self):
     #     self.score_grade = -1

@@ -5,6 +5,8 @@ from tkinter import messagebox
 from course import Course
 from section import Section
 
+import datetime #for new course init
+
 class About_Dialog(simpledialog.Dialog):
   def __init__(self, parent, title="Class Grader"):
     super().__init__(parent, title=title)
@@ -25,7 +27,7 @@ This software is open source and is hosted on github.com/tbender4/Class-Grader""
     
 
   def buttonbox(self):
-    # Similar to stock but only a close button
+    # Similar to stock but ONLY a close button
     box = tkinter.Frame(self)
     w = tkinter.Button(box, text="Close", width=10, command=self.cancel)
     w.pack(side=tkinter.LEFT, padx=5, pady=5)
@@ -195,7 +197,7 @@ class Section_Tree(ttk.Treeview):   #table view. possibly rewrite with inheritan
     # UPDATE 04/23/20: It syncs properly now! Using tree_student_dict!!
 
     #new_student = Edit_Student(self.master, last, first)
-    new_student = Edit_Student(self.master, student_grade, self.section)  #passes in existing student_grade
+    new_student = Edit_Student(self.master, student_grade, self.section.attendance_dates)  #passes in existing student_grade
     #section is passed through to utilize the section's template of attendances.
     #will later implement the score related information
     student_grade['student'].last_name = new_student.last_name
@@ -207,10 +209,12 @@ class Section_Tree(ttk.Treeview):   #table view. possibly rewrite with inheritan
 
 class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
   class Attendance_Tree(ttk.Treeview):
-    def __init__ (self, master, student_grade):
+    def __init__ (self, master, student_grade, attendance_dates):
+      #attendance_dates is the template of dates. is it even necessary?
+
       super().__init__(master)
 
-  def __init__(self, parent, student_grade):
+  def __init__(self, parent, student_grade, attendance_dates):
     # inherited constructor needs original window
     self.student_grade = student_grade
     self.last_name = self.student_grade['student'].last_name

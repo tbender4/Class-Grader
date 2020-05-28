@@ -40,7 +40,7 @@ class Section:
         for student_grade in student_grade_list:
             for attendance in student_grade['attendances']:
                 pass
-    #TODO: Make attendnace dictionary of { date: status } Then redo this function
+    #TODO: Make attendnace dictionary of { date: status } Then redo this function   
 
     def section_dict(self): #returns itself as dict format
         students = []
