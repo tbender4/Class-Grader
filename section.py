@@ -2,6 +2,7 @@ import student
 import datetime
 from grading import Score, Attendance
 
+
 class Section:
     
     def student_grade_model(self, id=-1, last_name = 'last_name', first_name = 'first_name', attendances = [Attendance()]): # id pass to studentID

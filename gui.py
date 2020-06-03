@@ -4,8 +4,8 @@ from tkinter import simpledialog
 from tkinter import messagebox
 from course import Course
 from section import Section
+import grading  ##for attendance_date related
 
-import datetime #for new course init
 
 class About_Dialog(simpledialog.Dialog):
   def __init__(self, parent, title="Class Grader"):
@@ -45,15 +45,31 @@ class New_Course(simpledialog.Dialog):                   #inherit tkinter.simple
 
 
   def body(self, master):
+    def update_status():
+      isValid, message = grading.attendance_date_range_dryrun(days_toggle)
+      print(message)
 
-    tkinter.Label(master, text="Course ID (ex: MAC108):").grid(column = 0, row=0, sticky='w')
-    tkinter.Label(master, text="Course Full Name (ex: Intro to Python):").grid(column = 0, row=1)
-    self.new_course_ID = tkinter.Entry(master)
-    self.new_course_name = tkinter.Entry(master)
-
+    info_frame = tkinter.Frame(master)
+    info_frame.grid(column=0, row=0, columnspan=2)
+    tkinter.Label(info_frame, text="Course ID (ex: MAC108):").grid(column = 0, row=0, sticky='w')
+    tkinter.Label(info_frame, text="Course Full Name (ex: Intro to Python):").grid(column = 0, row=1)
+    self.new_course_ID = tkinter.Entry(info_frame)
+    self.new_course_name = tkinter.Entry(info_frame)
     self.new_course_ID.grid(column=1,row=0)
     self.new_course_name.grid(column=1,row=1)
+
+    range_frame = tkinter.Frame(master)
+    range_frame.grid(row=1, column=0)
+    days_of_week = ['M', 'Tu', 'W', 'Th', 'F', 'Sa', 'Su']
+    days_toggle = []
+    for i in range(7):
+      days_toggle.append(tkinter.BooleanVar)
+      tkinter.Checkbutton(range_frame, text=days_of_week[i], variable=days_toggle[i]).grid(row=0, column=i)
     
+    status = (False, "")
+    verify_button = tkinter.Button(range_frame, text="Verify", command=update_status)
+    verify_button.grid(row=0, column = 8 )
+
     return None             
 
   def validate(self):
