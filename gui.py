@@ -46,8 +46,11 @@ class New_Course(simpledialog.Dialog):                   #inherit tkinter.simple
 
   def body(self, master):
     def update_status():
-      isValid, message = grading.attendance_date_range_dryrun(days_toggle)
+      for days in self.days_toggle:
+        print(days.get())
+      isValid, message = grading.attendance_date_range_dryrun(self.days_toggle, from_entry.get(), to_entry.get())
       print(message)
+      message_var.set(message)
 
     info_frame = tkinter.Frame(master)
     info_frame.grid(column=0, row=0, columnspan=2)
@@ -60,22 +63,42 @@ class New_Course(simpledialog.Dialog):                   #inherit tkinter.simple
 
     range_frame = tkinter.Frame(master)
     range_frame.grid(row=1, column=0)
+
+    tkinter.Label(range_frame, text="Range (mm/dd/yy):").grid(row=0, column = 0)
+    tkinter.Label(range_frame, text="From:").grid(row=0, column = 1)
+    from_entry = tkinter.Entry(range_frame, width=8)
+    from_entry.grid(row = 0, column = 2)
+    tkinter.Label(range_frame, text="To:").grid(row=0, column = 3)
+    to_entry = tkinter.Entry(range_frame, width=8)
+    to_entry.grid(row = 0, column = 4)
+
+    days_frame = tkinter.Frame(master)
+    days_frame.grid(row=2, column=0)
     days_of_week = ['M', 'Tu', 'W', 'Th', 'F', 'Sa', 'Su']
-    days_toggle = []
+    self.days_toggle = []
     for i in range(7):
-      days_toggle.append(tkinter.BooleanVar)
-      tkinter.Checkbutton(range_frame, text=days_of_week[i], variable=days_toggle[i]).grid(row=0, column=i)
-    
-    status = (False, "")
-    verify_button = tkinter.Button(range_frame, text="Verify", command=update_status)
-    verify_button.grid(row=0, column = 8 )
+      self.days_toggle.append(tkinter.BooleanVar(master))
+      tkinter.Checkbutton(days_frame, text=days_of_week[i], variable=self.days_toggle[i]).grid(row=0, column=i)
+    verify_button = tkinter.Button(days_frame, text="Verify", command=update_status)
+    verify_button.grid(row= 0, column = 8)
+
+    message_var = tkinter.StringVar(master)
+    message_var.set("Press Verify to check status")
+    message_label = tkinter.Label(days_frame, textvariable=message_var, wraplength=240)
+    message_label.grid(row=1, column=0, columnspan=9)
 
     return None             
 
   def validate(self):
     if self.new_course_ID.get().strip() == '' or self.new_course_name.get().strip() == '':
       return 0
-    return 1
+    
+    status = 0
+    for days in self.days_toggle:
+      if days.get():
+        status = 1
+
+    return status
 
   def apply(self):
     print("apply hit")

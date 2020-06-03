@@ -12,18 +12,18 @@ exam_size = 0
 # Focus on implementing this after properly implementin attendance. (have attendance be fixed)
 
 
-def attendance_date_range_dryrun(checkmark_list, from_date_str=datetime.datetime.now(), to_date_str=datetime.datetime.now()+datetime.timedelta(days = 180)):
+def attendance_date_range_dryrun(checkmark_list, from_date_str='5/6/19', to_date_str='01/20/20'):
     #checkmark_list: [1, 0, 1, 0, 0, 0, 1] -> monday, tuesday, saturday
 
     #if returns true, it is a valid range. Output is just whatever text may appear if clicked on "validate" instead of Apply/OK
     #date: mm/dd/yy
-    #TODO: Need to sanitize (maybe in gui?)
+    #TODO: Need to test if santizing works with current try/except.
 
     dates = []
 
     try:
-        from_date = datetime.datetime.strptime(date_string=from_date_str, format='%m/%d/%y')
-        to_date = datetime.datetime.strptime(date_string=to_date_str, format='%m/%d/%y')
+        from_date = datetime.datetime.strptime(from_date_str, '%m/%d/%y')
+        to_date = datetime.datetime.strptime(to_date_str, '%m/%d/%y')
         delta = to_date - from_date
     except ValueError:
         return (False, "Incorrect formatting.")
@@ -37,7 +37,7 @@ def attendance_date_range_dryrun(checkmark_list, from_date_str=datetime.datetime
     date_i = from_date
     count = 0
     while date_i != to_date + datetime.timedelta(days=1):
-        if checkmark_list[date_i.weekday()]:
+        if checkmark_list[date_i.weekday()].get():
             count += 1
             #        attendance_date_template.append(date_i.strftime("%m/%d/%y"))
         date_i = date_i + datetime.timedelta(days=1)
@@ -48,7 +48,7 @@ def attendance_date_range_dryrun(checkmark_list, from_date_str=datetime.datetime
     if count == 0:
         return (False, "Too short of a range.")
     
-    return (True, "From {} to {} will be {} days of class.".format(from_date.strftime("%B %e, %Y"), to_date.strftime("%B %e %Y"), count))
+    return (True, "From {} to {} will be {} days of class.".format(from_date.strftime("%B %e, %Y"), to_date.strftime("%B %e, %Y"), count))
 
 
 class Score:
