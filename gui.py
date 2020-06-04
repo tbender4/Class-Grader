@@ -291,7 +291,7 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
     tkinter.Label(master, text="Exam:\n(from 0 - 100)").grid(row=2, column=3)
 
     self.att_entry = []
-    attendance_tree = self.Attendance_Tree(master, self.student_grade)
+    # attendance_tree = self.Attendance_Tree(master, self.student_grade)
 
     for i, attendance in enumerate([1, 2, 3, 4, 5], start=3):
       entry = tkinter.Entry(master)
@@ -415,7 +415,7 @@ def test_course():
 def course_window(course_ID, course_name, attendance_date_template = []):
   def report_size(window):    #debug to report window size for testing
     print(window.winfo_width(), window.winfo_height())
-  def report_attendance_range():    #debug to report window size for testing
+  def report_attendance_range():    #debug to report course-wide attendance list
     for date in attendance_date_template:
       print(date)
 
@@ -428,7 +428,7 @@ def course_window(course_ID, course_name, attendance_date_template = []):
   
   #generation of the course in question
   #TODO show more than one course in the GUI at the same time
-  course = Course(course_ID, course_name)
+  course = Course(course_ID, course_name, attendance_date_template)
   course.printCourse()
 
   course_window=tkinter.Toplevel()

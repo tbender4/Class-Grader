@@ -9,20 +9,29 @@ class Section:
         return {
             "student": student.Student(id, last_name, first_name),
             "attendances": attendances,  #Attendance()
-            "homeworks": [],         #Score()
-            "quizzes": [],           #Score()
-            "exams": []              #Score()
-        }
+            "homeworks": [],        #Score()
+            "quizzes": [],          #Score()
+            "exams": []             #Score()
+            }
 
-    def __init__(self, sectionID=66): #66 is for testing purposes only. should start at 01
+    def __init__(self, sectionID=66, attendance_date_template=['01/01/19']): #66 is for testing purposes only. should start at 01
         self.sectionID = sectionID
-        self.attendance_dates = []      #Generating attendances per student should be copied from here
-                                        #so each student is consistent
-                                        #list of Attendances.
-        self.student_grade_list = []  # array of students and their grades
+        self.attendance_date_template = attendance_date_template
 
+        self.student_grade_list = []  # array of students and their grades
         self.student_grade_list.append(self.student_grade_model(id=0, attendances=self.attendance_dates))
+    
+    def generate_attendance_list(self):
+        #pregenerates attendances to give to a student (possible move into another class?)
+        attendances = []
+        for date in self.attendance_date_template:
+            #date is in string form (final form).
+            attendances.append(Attendance(-1, date))
+            #TODO: all in -1 (unknown) status for testing. change later.
         
+        return attendances
+
+
     def add_attendance_date(self, date_string = None):
         #adds to the global attendance_dates.
         #TODO: Add code that'll replace in the student info
@@ -38,7 +47,7 @@ class Section:
     def update_all_attendance(self):
         #if student has that attendance, do nothing. Otherwise continue on the other way
         #TODO: This is O(n^2). Needs proper search algorithm.
-        for student_grade in student_grade_list:
+        for student_grade in self.student_grade_list:
             for attendance in student_grade['attendances']:
                 pass
     #TODO: Make attendnace dictionary of { date: status } Then redo this function   

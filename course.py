@@ -13,9 +13,9 @@ class Course:
         if name == "":
             self.name = courseID    #Copies text of courseID
         self.courseID = courseID
-        initialSection = section.Section(1)
-        self.sectionList = []
         self.attendance_date_template = attendance_date_template
+        initialSection = section.Section(1, self.attendance_date_template)
+        self.sectionList = []
         self.sectionList.append(initialSection)
 
     def writeToFile(self):
