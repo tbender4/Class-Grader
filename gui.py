@@ -48,7 +48,7 @@ class New_Course(simpledialog.Dialog):                   #inherit tkinter.simple
     def update_status():
       for days in self.days_toggle:
         print(days.get())
-      isValid, message = grading.attendance_date_range_dryrun(self.days_toggle, from_entry.get(), to_entry.get())
+      isValid, message = grading.attendance_date_range_dryrun(self.days_toggle, self.from_entry.get(), self.to_entry.get())
       print(message)
       message_var.set(message)
 
@@ -66,11 +66,11 @@ class New_Course(simpledialog.Dialog):                   #inherit tkinter.simple
 
     tkinter.Label(range_frame, text="Range (mm/dd/yy):").grid(row=0, column = 0)
     tkinter.Label(range_frame, text="From:").grid(row=0, column = 1)
-    from_entry = tkinter.Entry(range_frame, width=8)
-    from_entry.grid(row = 0, column = 2)
+    self.from_entry = tkinter.Entry(range_frame, width=8)
+    self.from_entry.grid(row = 0, column = 2)
     tkinter.Label(range_frame, text="To:").grid(row=0, column = 3)
-    to_entry = tkinter.Entry(range_frame, width=8)
-    to_entry.grid(row = 0, column = 4)
+    self.to_entry = tkinter.Entry(range_frame, width=8)
+    self.to_entry.grid(row = 0, column = 4)
 
     days_frame = tkinter.Frame(master)
     days_frame.grid(row=2, column=0)
@@ -93,6 +93,8 @@ class New_Course(simpledialog.Dialog):                   #inherit tkinter.simple
     if self.new_course_ID.get().strip() == '' or self.new_course_name.get().strip() == '':
       return 0
     
+    return grading.attendance_date_range_dryrun(self.days_toggle, self.from_entry.get(), self.to_entry.get())[0]
+
     status = 0
     for days in self.days_toggle:
       if days.get():
@@ -105,8 +107,9 @@ class New_Course(simpledialog.Dialog):                   #inherit tkinter.simple
     print(str(self.new_course_ID.get()))
     # self.parent.withdraw()  
     # TODO: Save this to the actual course data. Then draw window.
+    attendance_date_template = grading.attendance_date_range(self.days_toggle, self.from_entry.get(), self.to_entry.get())
 
-    course_window(self.new_course_ID.get().strip(), self.new_course_name.get().strip())
+    course_window(self.new_course_ID.get().strip(), self.new_course_name.get().strip(), attendance_date_template)
 
 class New_Student_Dialog(simpledialog.Dialog):  # inherit tkinter.simpledialog
   def __init__(self, parent):
@@ -409,9 +412,12 @@ def test_course():
   course_window('MAC000', 'Intro to Testing')
 
 
-def course_window(course_ID, course_name):
+def course_window(course_ID, course_name, attendance_date_template = []):
   def report_size(window):    #debug to report window size for testing
     print(window.winfo_width(), window.winfo_height())
+  def report_attendance_range():    #debug to report window size for testing
+    for date in attendance_date_template:
+      print(date)
 
   def add_new_section(notebook, course):
     s_frame = Section_Frame(notebook, course.addNewSection())
@@ -455,7 +461,9 @@ def course_window(course_ID, course_name):
 
   #placing course_window grid
   tkinter.Button(course_window, text="Report size",
-                 command=lambda: report_size(course_window)).grid(row=1, sticky='W')
+                 command=lambda: report_size(course_window)).grid(row=1, column = 0, sticky='W')
+  tkinter.Button(course_window, text="Print all dates",
+                 command=report_attendance_range).grid(row=3, column = 1, sticky='E')
   add_button = tkinter.Button(course_window, text="Add Section",
                  command=lambda: add_new_section(sections_notebook, course))
   add_button.grid(column=1, row=1, sticky='W')

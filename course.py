@@ -8,13 +8,14 @@ class Course:
 
     __keys  = [ "courseID", "name", "sectionList"]
 
-    def __init__(self, courseID, name = ""):
+    def __init__(self, courseID, name = "", attendance_date_template = ['00/00/00']):
         self.name = name
         if name == "":
             self.name = courseID    #Copies text of courseID
         self.courseID = courseID
         initialSection = section.Section(1)
         self.sectionList = []
+        self.attendance_date_template = attendance_date_template
         self.sectionList.append(initialSection)
 
     def writeToFile(self):

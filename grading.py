@@ -1,9 +1,9 @@
 import math
 import datetime
 
-attendance_date_template = []
 #TODO: 5/28: It may be easier if I just ask for dates to be created upon initialization and not have change.
 #We can start with asking frequency of the class and then add another code for "Not counted" date.
+#TODO: 6/03: Maybe I should put attendance_date functions as static functions in Attendance class.
 
 homework_size = 0   #Number of homeworks assigned for specific class
 quiz_size = 0
@@ -12,12 +12,11 @@ exam_size = 0
 # Focus on implementing this after properly implementin attendance. (have attendance be fixed)
 
 
-def attendance_date_range_dryrun(checkmark_list, from_date_str='5/6/19', to_date_str='01/20/20'):
+def attendance_date_range_dryrun(checkmark_list, from_date_str='5/6/19', to_date_str='01/20/20', ):
     #checkmark_list: [1, 0, 1, 0, 0, 0, 1] -> monday, tuesday, saturday
 
     #if returns true, it is a valid range. Output is just whatever text may appear if clicked on "validate" instead of Apply/OK
     #date: mm/dd/yy
-    #TODO: Need to test if santizing works with current try/except.
 
     dates = []
 
@@ -42,14 +41,29 @@ def attendance_date_range_dryrun(checkmark_list, from_date_str='5/6/19', to_date
             #        attendance_date_template.append(date_i.strftime("%m/%d/%y"))
         date_i = date_i + datetime.timedelta(days=1)
 
-
-
     
     if count == 0:
         return (False, "Too short of a range.")
     
     return (True, "From {} to {} will be {} days of class.".format(from_date.strftime("%B %e, %Y"), to_date.strftime("%B %e, %Y"), count))
 
+def attendance_date_range(checkmark_list, from_date_str='5/6/19', to_date_str='01/20/20'):
+    #a copy/paste from dryrun but with new return lines.
+    #attendance_date_template pertains to the specific course.
+    attendance_date_template = []
+
+    from_date = datetime.datetime.strptime(from_date_str, '%m/%d/%y')
+    to_date = datetime.datetime.strptime(to_date_str, '%m/%d/%y')
+    delta = to_date - from_date
+
+    date_i = from_date
+    while date_i != to_date + datetime.timedelta(days=1):
+        if checkmark_list[date_i.weekday()].get():
+            attendance_date_template.append(date_i.strftime("%m/%d/%y"))
+        date_i = date_i + datetime.timedelta(days=1)
+    
+    return attendance_date_template
+    
 
 class Score:
     # def __init__(self):
@@ -103,8 +117,8 @@ class Score:
 
 class Attendance:
 	# status numbers: -1 = unknown, 0 = absent, 1 = present, 2 = late
-    #
-    def __init__(self, day_status=-1, date = datetime.datetime.now()):
+    # have the front facing gui be a checkmark system? something
+    def __init__(self, day_status=-1, date = datetime.datetime.now().strftime('%m/%d/%y')):
         self.day_status = day_status
         self.date = date
         self.printAttendance()
@@ -113,9 +127,9 @@ class Attendance:
         self.day_status = day_status
 
     def printAttendance(self):
-        print(self.day_status, self.date.today(), end='')
+        print(self.day_status, self.date, '|', end='')
 
-    @staticmethod
+    @staticmethod   #TODO: Implement this eventually.
     def attendance_generate_grade(attendance=[-1], free_miss_days=0, have_max_missed_days=False, max_missed_days=6, late_convert_to_absence=False, late_penalty=0.5):
         attended = 0
         late = 0
