@@ -120,14 +120,18 @@ class Attendance:
     # have the front facing gui be a checkmark system? something
     def __init__(self, day_status=-1, date = datetime.datetime.now().strftime('%m/%d/%y')):
         self.day_status = day_status
-        self.date = date
+        self.date = date        #this is of type string.
         self.printAttendance()
 
-    def edit_day(self, day_status):
-        self.day_status = day_status
+    def mark_late(self):
+        self.day_status = 2
+    def mark_present(self):
+        self.day_status = 1
+    def mark_absent(self):
+        self.day_status = 0
 
     def printAttendance(self):
-        print(self.day_status, self.date, '|', end='')
+        print(self.day_status, self.date, '| ', end='')
 
     @staticmethod   #TODO: Implement this eventually.
     def attendance_generate_grade(attendance=[-1], free_miss_days=0, have_max_missed_days=False, max_missed_days=6, late_convert_to_absence=False, late_penalty=0.5):

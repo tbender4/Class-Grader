@@ -184,10 +184,6 @@ class Section_Tree(ttk.Treeview):   #table view. possibly rewrite with inheritan
       insertion_ID = self.insert(a, b, text=text, values=values)
       self.tree_student_dict.update({insertion_ID : student_grade})
 
-
-
-
-
   def gen_child(self, student_grade, last_name = None, first_name = None):
 
     #if options are provided, overwrite info with given info (should reflect in data as well)
@@ -228,18 +224,11 @@ class Section_Tree(ttk.Treeview):   #table view. possibly rewrite with inheritan
     student_grade = self.tree_student_dict[focus]
     last = student_grade['student'].last_name
     first = student_grade['student'].first_name
-    # print(focus[]
-    #this is dirty. doesn't save information properly
-    #Having the student as an argument would be best student would be best
-    # l_f = self.item(focus)['values'][0].split(",")
-    # last = l_f[0]
-    # first = l_f[1]
-    # print('test', l_f)
 
     # UPDATE 04/23/20: It syncs properly now! Using tree_student_dict!!
 
     #new_student = Edit_Student(self.master, last, first)
-    new_student = Edit_Student(self.master, student_grade, self.section.attendance_dates)  #passes in existing student_grade
+    new_student = Edit_Student(self.master, student_grade)  #passes in existing student_grade
     #section is passed through to utilize the section's template of attendances.
     #will later implement the score related information
     student_grade['student'].last_name = new_student.last_name
@@ -251,12 +240,31 @@ class Section_Tree(ttk.Treeview):   #table view. possibly rewrite with inheritan
 
 class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
   class Attendance_Tree(ttk.Treeview):
-    def __init__ (self, master, student_grade, attendance_dates):
-      #attendance_dates is the template of dates. is it even necessary?
-
+    def __init__ (self, master, student_grade):
       super().__init__(master)
 
-  def __init__(self, parent, student_grade, attendance_dates):
+      #formatting
+      header_names = {
+        #'date' : 'Date',
+        'attendance' : 'Attendance'
+      }
+      self['columns'] = list(header_names.keys())
+      for key, value in header_names.items():
+        self.column(key, width = 40)
+        self.heading(key, text=value)
+
+      self.column('#0', width = 80)
+      self.heading('#0', text = 'Date')
+
+      #inserting values
+      for attendance in student_grade['attendances']:
+        self.insert('', 'end', text=attendance.date, values = (attendance.day_status))
+
+
+
+
+
+  def __init__(self, parent, student_grade):
     # inherited constructor needs original window
     self.student_grade = student_grade
     self.last_name = self.student_grade['student'].last_name
@@ -285,69 +293,71 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
     self.last_name_entry.grid(column=1, row=0)
     self.first_name_entry.grid(column=1, row=1)
 
-    tkinter.Label(master, text="Attendance\n(0 for absent, 1 for present):").grid(row=2)
-    tkinter.Label(master, text="Homework:\n(from 0 - 100)").grid(row=2, column=1)
-    tkinter.Label(master, text="Quiz:\n(from 0 - 100)").grid(row=2, column=2)
-    tkinter.Label(master, text="Exam:\n(from 0 - 100)").grid(row=2, column=3)
+    attendance_tree = self.Attendance_Tree(master, self.student_grade)
+    attendance_tree.grid(row=2, column=0, columnspan=2)
 
-    self.att_entry = []
-    # attendance_tree = self.Attendance_Tree(master, self.student_grade)
+    # tkinter.Label(master, text="Attendance\n(0 for absent, 1 for present):").grid(row=2)
+    # tkinter.Label(master, text="Homework:\n(from 0 - 100)").grid(row=2, column=1)
+    # tkinter.Label(master, text="Quiz:\n(from 0 - 100)").grid(row=2, column=2)
+    # tkinter.Label(master, text="Exam:\n(from 0 - 100)").grid(row=2, column=3)
 
-    for i, attendance in enumerate([1, 2, 3, 4, 5], start=3):
-      entry = tkinter.Entry(master)
-      entry.insert(0, attendance)
-      entry.grid(row=i, column = 0)
-      self.att_entry.append(entry)
-    print("outside:", i)
-    last_i = i
-    button = tkinter.Button(master, text="Add new attendance", command=lambda: addEntry(last_i+1, self.att_entry, button))
-    button.grid(row=last_i+1, column=0)
+    # self.att_entry = []
 
-    self.hw_entry = []
-    for i in range(3, 15):
-      entry = tkinter.Entry(master)
-      entry.insert(0, '0')
-      entry.grid(row=i, column=1)
-      self.hw_entry.append(entry)
+    # for i, attendance in enumerate([1, 2, 3, 4, 5], start=3):
+    #   entry = tkinter.Entry(master)
+    #   entry.insert(0, attendance)
+    #   entry.grid(row=i, column = 0)
+    #   self.att_entry.append(entry)
+    # print("outside:", i)
+    # last_i = i
+    # button = tkinter.Button(master, text="Add new attendance", command=lambda: addEntry(last_i+1, self.att_entry, button))
+    # button.grid(row=last_i+1, column=0)
 
-    self.quiz_entry = []
-    for i in range(3, 15):
-      entry = tkinter.Entry(master)
-      entry.insert(0, '0')
-      entry.grid(row=i, column=2)
-      self.quiz_entry.append(entry)
+    # self.hw_entry = []
+    # for i in range(3, 15):
+    #   entry = tkinter.Entry(master)
+    #   entry.insert(0, '0')
+    #   entry.grid(row=i, column=1)
+    #   self.hw_entry.append(entry)
+
+    # self.quiz_entry = []
+    # for i in range(3, 15):
+    #   entry = tkinter.Entry(master)
+    #   entry.insert(0, '0')
+    #   entry.grid(row=i, column=2)
+    #   self.quiz_entry.append(entry)
 
 
-    self.exam_entry = []
-    for i in range(3, 7):
-      entry = tkinter.Entry(master)
-      entry.insert(0, '0')
-      entry.grid(row=i, column=3)
-      self.exam_entry.append(entry)
+    # self.exam_entry = []
+    # for i in range(3, 7):
+    #   entry = tkinter.Entry(master)
+    #   entry.insert(0, '0')
+    #   entry.grid(row=i, column=3)
+    #   self.exam_entry.append(entry)
 
     return None
 
   def validate(self):
-    try:
-      for entry in self.att_entry:
-        value = int(entry.get().strip())
-        if value > 1 or value < 0:
-          return 0
-      for entry in self.hw_entry:
-        value = int(entry.get().strip())
-        if value > 100 or value < 0:
-          return 0
-      for entry in self.quiz_entry:
-        value = int(entry.get().strip())
-        if value > 100 or value < 0:
-          return 0
-      for entry in self.exam_entry:
-        value = int(entry.get().strip())
-        if value > 100 or value < 0:
-          return 0
+    # try:
+    #   for entry in self.att_entry:
+    #     value = int(entry.get().strip())
+    #     if value > 1 or value < 0:
+    #       return 0
+    #   for entry in self.hw_entry:
+    #     value = int(entry.get().strip())
+    #     if value > 100 or value < 0:
+    #       return 0
+    #   for entry in self.quiz_entry:
+    #     value = int(entry.get().strip())
+    #     if value > 100 or value < 0:
+    #       return 0
+    #   for entry in self.exam_entry:
+    #     value = int(entry.get().strip())
+    #     if value > 100 or value < 0:
+    #       return 0
 
-    except ValueError:
-      return 0
+    # except ValueError:
+    #   return 0
 
     if self.last_name_entry.get().strip() == '' or self.first_name_entry.get().strip() == '':
       return 0
@@ -415,7 +425,7 @@ def test_course():
 def course_window(course_ID, course_name, attendance_date_template = []):
   def report_size(window):    #debug to report window size for testing
     print(window.winfo_width(), window.winfo_height())
-  def report_attendance_range():    #debug to report course-wide attendance list
+  def report_attendance_range():    #debug to report window size for testing
     for date in attendance_date_template:
       print(date)
 
