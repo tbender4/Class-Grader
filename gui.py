@@ -250,7 +250,7 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
       }
       self['columns'] = list(header_names.keys())
       for key, value in header_names.items():
-        self.column(key, width = 40)
+        # self.column(key, width = 40)
         self.heading(key, text=value)
 
       self.column('#0', width = 80)
@@ -260,8 +260,29 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
       for attendance in student_grade['attendances']:
         self.insert('', 'end', text=attendance.date, values = (attendance.day_status))
 
+  class Homework_Tree(ttk.Treeview):
+    def __init__ (self, master, student_grade):
+      super().__init__(master)
 
+      #formatting
+      header_names = {
+        #'homework_number' : 'Homework Number',
+        'description' : 'Description',
+        'grade' : 'Grade',
+        'use_curve' : "Grade Type"
+      }
+      self['columns'] = list(header_names.keys())
+      for key, value in header_names.items():
+        # self.column(key, width = 40)
+        self.heading(key, text=value)
 
+      self.column('#0', width = 80)
+      self.heading('#0', text = 'HW Number')
+
+      #inserting values
+      for homework in student_grade['homeworks']:
+        self.insert('', 'end', text=homework.score_id, values = (homework.description, 'N/100', homework.use_curve))
+        # TODO: Score needs to be a function that responds to whether to show raw score or curved score.
 
 
   def __init__(self, parent, student_grade):
@@ -295,6 +316,18 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
 
     attendance_tree = self.Attendance_Tree(master, self.student_grade)
     attendance_tree.grid(row=2, column=0, columnspan=2)
+    edit_attendance_button = tkinter.Button(master, text='Edit Selected Attendance')
+    edit_attendance_button.grid(row=3, column=0, columnspan=2)
+    #TODO: Implement DUMMY
+
+    homework_tree = self.Homework_Tree(master, self.student_grade)
+    homework_tree.grid(row=2, column = 2, columnspan=2)
+    add_hw_button = tkinter.Button(master, text = 'Add New HW')
+    edit_hw_button = tkinter.Button(master, text = 'Edit Selected HW')
+    add_hw_button.grid(row=3, column=2)
+    edit_hw_button.grid(row=3, column=3)
+    #TODO: GUI HW only; untested.
+
 
     # tkinter.Label(master, text="Attendance\n(0 for absent, 1 for present):").grid(row=2)
     # tkinter.Label(master, text="Homework:\n(from 0 - 100)").grid(row=2, column=1)

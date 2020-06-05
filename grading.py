@@ -71,7 +71,9 @@ class Score:
     #     self.curve_grade = -1
     #     self.use_curve = False
 
-    def __init__(self, score_grade=-1, use_curve=False, curve_grade = -1):
+    def __init__(self, score_grade=-1, use_curve=False, curve_grade = -1, score_id = '00', description = 'while and for loops'):
+        self.score_id = score_id
+        self.description = description
         self.score_grade = score_grade
         self.curve_grade = score_grade
         self.use_curve = use_curve
