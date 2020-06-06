@@ -260,7 +260,9 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
       for attendance in student_grade['attendances']:
         self.insert('', 'end', text=attendance.date, values = (attendance.day_status))
 
-  class Homework_Tree(ttk.Treeview):
+  class Score_Tree(ttk.Treeview):
+    #Abstract. Use the below tress instead
+    #TODO: Possibly re-combine and have passed through inits change the header and key?
     def __init__ (self, master, student_grade):
       super().__init__(master)
 
@@ -277,11 +279,41 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
         self.heading(key, text=value)
 
       self.column('#0', width = 80)
+      # self.heading('#0', text = 'HW Number')
+
+      #inserting values
+      # for homework in student_grade['homeworks']:
+      #   self.insert('', 'end', text=homework.score_id, values = (homework.description, 'N/100', homework.use_curve))
+        # TODO: Score needs to be a function that responds to whether to show raw score or curved score.
+
+  class Homework_Tree(Score_Tree):
+    def __init__ (self, master, student_grade):
+      super().__init__(master, student_grade)
       self.heading('#0', text = 'HW Number')
 
       #inserting values
       for homework in student_grade['homeworks']:
         self.insert('', 'end', text=homework.score_id, values = (homework.description, 'N/100', homework.use_curve))
+        # TODO: Score needs to be a function that responds to whether to show raw score or curved score.
+    
+  class Quiz_Tree(Score_Tree):
+    def __init__ (self, master, student_grade):
+      super().__init__(master, student_grade)
+      self.heading('#0', text = 'Quiz Number')
+
+      #inserting values
+      for quiz in student_grade['quizzes']:
+        self.insert('', 'end', text=quiz.score_id, values = (quiz.description, 'N/100', quiz.use_curve))
+        # TODO: Score needs to be a function that responds to whether to show raw score or curved score.
+  
+  class Exam_Tree(Score_Tree):
+    def __init__ (self, master, student_grade):
+      super().__init__(master, student_grade)
+      self.heading('#0', text = 'Exam Number')
+
+      #inserting values
+      for exam in student_grade['exams']:
+        self.insert('', 'end', text=exam.score_id, values = (exam.description, 'N/100', exam.use_curve))
         # TODO: Score needs to be a function that responds to whether to show raw score or curved score.
 
 
@@ -326,6 +358,11 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
     edit_hw_button = tkinter.Button(master, text = 'Edit Selected HW')
     add_hw_button.grid(row=3, column=2)
     edit_hw_button.grid(row=3, column=3)
+
+    quiz_tree = self.Quiz_Tree(master, self.student_grade)
+    quiz_tree.grid(row=2, column = 4, columnspan=2)
+    exam_tree = self.Exam_Tree(master, self.student_grade)
+    exam_tree.grid(row=2, column = 6, columnspan=2)
     #TODO: GUI HW only; untested.
 
 
