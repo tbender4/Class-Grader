@@ -17,6 +17,7 @@ then integrate tkinter
 then integrate matplotlib
 
 use json to store files. json plays with dictionaries
+last finally integrate with sql and overhaul
 """
 
 # print("hello")

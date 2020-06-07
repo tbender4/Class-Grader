@@ -38,10 +38,12 @@ This software is open source and is hosted on github.com/tbender4/Class-Grader""
   
 
 class New_Course(simpledialog.Dialog):                   #inherit tkinter.simpledialog
-  def __init__(self, parent):
-    self.new_course_ID = ""
-    self.new_course_name = ""
+  def __init__(self, parent, test = False):
+    self.test = test
     super().__init__(parent, title="Enter Course Information:")      #inherited constructor needs original window
+    
+
+
 
 
   def body(self, master):
@@ -76,9 +78,14 @@ class New_Course(simpledialog.Dialog):                   #inherit tkinter.simple
     days_frame.grid(row=2, column=0)
     days_of_week = ['M', 'Tu', 'W', 'Th', 'F', 'Sa', 'Su']
     self.days_toggle = []
+    self.checkbuttons = []
     for i in range(7):
       self.days_toggle.append(tkinter.BooleanVar(master))
-      tkinter.Checkbutton(days_frame, text=days_of_week[i], variable=self.days_toggle[i]).grid(row=0, column=i)
+      checkbutton = tkinter.Checkbutton(days_frame, text=days_of_week[i], variable=self.days_toggle[i])
+      checkbutton.grid(row=0, column=i)
+
+      self.checkbuttons.append(checkbutton)
+      
     verify_button = tkinter.Button(days_frame, text="Verify", command=update_status)
     verify_button.grid(row= 0, column = 8)
 
@@ -87,6 +94,14 @@ class New_Course(simpledialog.Dialog):                   #inherit tkinter.simple
     message_label = tkinter.Label(days_frame, textvariable=message_var, wraplength=240)
     message_label.grid(row=1, column=0, columnspan=9)
 
+    if self.test:
+      self.new_course_ID.insert(0, 'MAC000')
+      self.new_course_name.insert(0, 'Intro to Testing')
+      self.from_entry.insert(0, '05/05/19')
+      self.to_entry.insert(0, '08/08/19')
+      self.checkbuttons[0].select()
+      self.checkbuttons[2].select()
+    
     return None             
 
   def validate(self):
@@ -192,9 +207,13 @@ class Section_Tree(ttk.Treeview):   #table view. possibly rewrite with inheritan
       student_grade['student'].first_name = first_name
       student_grade['student'].updateLF()
     student_ID = student_grade['student'].student_id
-    student_last = student_grade['student'].last_name
-    student_first = student_grade['student'].first_name
+    student_last = student_grade['student'].last_name #unused so far.
+    student_first = student_grade['student'].first_name #unused so far.
     student_last_first = student_grade['student'].last_first
+
+    #idea 06/07: pass through the whole object rather than renaming.
+    #unsure why I added them individually.
+    #    
     
     return ('', 'end', student_ID, (student_last_first , 'a', 'b', 'c', 'd'))
   
@@ -221,21 +240,27 @@ class Section_Tree(ttk.Treeview):   #table view. possibly rewrite with inheritan
 
     focus = self.focus()  #gets the item ID. need to put into self.item to be usable
     print("printing focus: "+ focus)
-    student_grade = self.tree_student_dict[focus]
-    last = student_grade['student'].last_name
-    first = student_grade['student'].first_name
+    student_grade = self.tree_student_dict[focus]   # Incredibly important line. Allows the original data to reflect what's in the GUI
 
     # UPDATE 04/23/20: It syncs properly now! Using tree_student_dict!!
 
-    #new_student = Edit_Student(self.master, last, first)
     new_student = Edit_Student(self.master, student_grade)  #passes in existing student_grade
     #section is passed through to utilize the section's template of attendances.
-    #will later implement the score related information
-    student_grade['student'].last_name = new_student.last_name
-    student_grade['student'].first_name = new_student.first_name
 
-    last_first = new_student.last_name + ', ' + new_student.first_name
-    self.item(focus, values=(last_first, new_student.att_avg, new_student.hw_avg, new_student.exam_avg, new_student.quiz_avg))
+    # 06/07: I believe the strategy is: create a variable inside new_student. then update this function's student_grade with that information. Then
+    #will later implement the score related information
+    # 06/07 part 2: I'm learning how important it is to be aware of pass by reference... code is simple now.
+
+
+    # takes info and determines what's the outward facing information.
+    # TODO: the below outputs. I probably should make this functions in the student class.
+    # att_avg
+    # hw_avg
+    # exam_avg
+    # quiz_avg
+    #end of outward facing information.
+    
+    self.item(focus, values=(student_grade['student'].last_first, 'new_student.att_avg', 'new_student.hw_avg', 'new_student.exam_avg', 'new_student.quiz_avg'))
     print(self.item(self.focus()))
 
 class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
@@ -260,6 +285,9 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
       for attendance in student_grade['attendances']:
         self.insert('', 'end', text=attendance.date, values = (attendance.day_status))
 
+    def print_focus(self):
+      print(self.item(self.focus()))
+
   class Score_Tree(ttk.Treeview):
     #Abstract. Use the below tress instead
     #TODO: Possibly re-combine and have passed through inits change the header and key?
@@ -279,12 +307,6 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
         self.heading(key, text=value)
 
       self.column('#0', width = 80)
-      # self.heading('#0', text = 'HW Number')
-
-      #inserting values
-      # for homework in student_grade['homeworks']:
-      #   self.insert('', 'end', text=homework.score_id, values = (homework.description, 'N/100', homework.use_curve))
-        # TODO: Score needs to be a function that responds to whether to show raw score or curved score.
 
   class Homework_Tree(Score_Tree):
     def __init__ (self, master, student_grade):
@@ -293,7 +315,7 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
 
       #inserting values
       for homework in student_grade['homeworks']:
-        self.insert('', 'end', text=homework.score_id, values = (homework.description, 'N/100', homework.use_curve))
+        self.insert('', 'end', text=homework.score_id, values = (homework.description, homework.get_score(), homework.use_curve))
         # TODO: Score needs to be a function that responds to whether to show raw score or curved score.
     
   class Quiz_Tree(Score_Tree):
@@ -321,23 +343,17 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
     # inherited constructor needs original window
     self.student_grade = student_grade
     self.last_name = self.student_grade['student'].last_name
-    self.first_name = self.student_grade['student'].first_name
+    self.first_name = self.student_grade['student'].first_name  #this is of type string. this is probably why it's pass by value and gave me the headache
     super().__init__(parent, title="Edit Student Information:")
 
   def body(self, master):
-    def addEntry(last_i, att_entry, button):
-      print("inside", last_i)
-      entry=tkinter.Entry(master)
-      entry.insert(0, 'new')
-      entry.grid(row=last_i, column=0)
-      att_entry.append(entry)
-      button.grid(row=last_i+1, column = 0)
+    def print_selected_attendance():
+      attendance_tree.print_focus()
 
     tkinter.Label(master, text="Last Name").grid(
         column=0, row=0, sticky='e')
     tkinter.Label(master, text="First Name:").grid(
         column=0, row=1, sticky='e')
-    print(self.last_name, self.first_name)
     self.last_name_entry = tkinter.Entry(master)
     self.last_name_entry.insert(0, self.last_name)
     self.first_name_entry = tkinter.Entry(master)
@@ -348,7 +364,7 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
 
     attendance_tree = self.Attendance_Tree(master, self.student_grade)
     attendance_tree.grid(row=2, column=0, columnspan=2)
-    edit_attendance_button = tkinter.Button(master, text='Edit Selected Attendance')
+    edit_attendance_button = tkinter.Button(master, text='Print Selected Attendance', command=print_selected_attendance)
     edit_attendance_button.grid(row=3, column=0, columnspan=2)
     #TODO: Implement DUMMY
 
@@ -360,9 +376,9 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
     edit_hw_button.grid(row=3, column=3)
 
     quiz_tree = self.Quiz_Tree(master, self.student_grade)
-    quiz_tree.grid(row=2, column = 4, columnspan=2)
+    quiz_tree.grid(row=4, column = 0, columnspan=2)
     exam_tree = self.Exam_Tree(master, self.student_grade)
-    exam_tree.grid(row=2, column = 6, columnspan=2)
+    exam_tree.grid(row=4, column = 2, columnspan=2)
     #TODO: GUI HW only; untested.
 
 
@@ -437,30 +453,31 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
   def apply(self):
     print("apply hit")
 
-    self.last_name = self.last_name_entry.get().strip()
-    self.first_name = self.first_name_entry.get().strip()
+    self.student_grade['student'].last_name = self.last_name_entry.get().strip()
+    self.student_grade['student'].first_name = self.first_name_entry.get().strip()
+    self.student_grade['student'].updateLF()
     
-    self.att_avg = 100 # reports back as percentage
-    att_sum = 0
-    for i in self.att_entry:
-      att_sum += int(i.get().strip())
-      print(att_sum)
-    self.att_avg = str(round(att_sum / len(self.att_entry) * 100, 2))+"%"
+    # self.att_avg = 100 # reports back as percentage
+    # att_sum = 0
+    # for i in self.att_entry:
+    #   att_sum += int(i.get().strip())
+    #   print(att_sum)
+    # self.att_avg = str(round(att_sum / len(self.att_entry) * 100, 2))+"%"
     
-    hw_sum = 0
-    for i in self.hw_entry:
-      hw_sum += int(i.get().strip()) / 100
-    self.hw_avg = str(round(hw_sum / len(self.hw_entry) * 100, 2))+"%"
+    # hw_sum = 0
+    # for i in self.hw_entry:
+    #   hw_sum += int(i.get().strip()) / 100
+    # self.hw_avg = str(round(hw_sum / len(self.hw_entry) * 100, 2))+"%"
 
-    quiz_sum = 0
-    for i in self.quiz_entry:
-      quiz_sum += int(i.get().strip()) / 100
-    self.quiz_avg = str(round(quiz_sum / len(self.quiz_entry) * 100, 2))+"%"
+    # quiz_sum = 0
+    # for i in self.quiz_entry:
+    #   quiz_sum += int(i.get().strip()) / 100
+    # self.quiz_avg = str(round(quiz_sum / len(self.quiz_entry) * 100, 2))+"%"
 
-    exam_sum = 0
-    for i in self.exam_entry:
-      exam_sum += int(i.get().strip()) / 100
-    self.exam_avg = str(round(exam_sum / len(self.exam_entry) * 100, 2))+"%"
+    # exam_sum = 0
+    # for i in self.exam_entry:
+    #   exam_sum += int(i.get().strip()) / 100
+    # self.exam_avg = str(round(exam_sum / len(self.exam_entry) * 100, 2))+"%"
 
 class Section_Frame(tkinter.Frame):
   # ---------------------
@@ -489,7 +506,8 @@ def new_course():
   New_Course(main_window)
 
 def test_course():
-  course_window('MAC000', 'Intro to Testing')
+  New_Course(main_window, True)
+  
 
 
 def course_window(course_ID, course_name, attendance_date_template = []):

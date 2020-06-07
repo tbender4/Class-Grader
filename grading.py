@@ -82,7 +82,9 @@ class Score:
         return {
             "raw" : self.score_grade,
             "curve" : self.curve_grade,
-            "use_curve" : self.use_curve
+            "use_curve" : self.use_curve,
+            "description" : self.description,
+            "score_id" : self.score_id
         }
 
     def printScore(self):
