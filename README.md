@@ -1,19 +1,39 @@
 # Class-Grader
 
+A class-grading program written in Python using tkinter GUI.
+
+## Motivation
+
+This is my most cohesive self-driven programming project in college. The idea of this program is to use OOP principles and challenge myself to make a coherent project.
+
+Class-Grader is a rolling development.
+
+## A word on tkinter
+
+While tkinter and traditional GUI applications have fallen out of favor with the rise of web apps and their frameworks, sticking with a traditional GUI experience is a personal choice as I felt it's sufficient enough for this type of software. The footprint is rather small and the usability so far has kept up. I've attempted to write functions in classes outside of the GUI class so it can be ported to perhaps a web app or even a different GUI library. Tkinter's a bit frustrating with scattered online documentation but reading the original source and its comments has been a great help.
+
+## Screenshots
+
+The functionality of this software is best explained in screenshots of it current state in development.
+
+[]()
+[]()
+[]()
+
 ## Ideas
 
 06/07:
 
-[] Complete the remaining parts of the student_grade dictionary
+[ ] Complete the remaining parts of the student_grade dictionary
 
-[] Finish Attendance GUI so it can editable
+[ ] Finish Attendance GUI so it can editable
 
-[] Score needs to be editable. Then implement in GUI
+[ ] Score needs to be editable. Then implement in GUI
 
-[] Score needs to be expandable yet reflecting for every student.
+[ ] Score needs to be expandable yet reflecting for every student.
 
-[] Once basic editable works, implement useful functions for switching scores, status of attendance, etc
+[ ] Once basic editable works, implement useful functions for switching scores, status of attendance, etc
 
-[] implement calculation of grades. Toggling curve and not
+[ ] implement calculation of grades. Toggling curve and not
 
-[] Bell curve with matplotlib.
+[ ] Bell curve with matplotlib.
