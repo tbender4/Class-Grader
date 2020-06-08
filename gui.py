@@ -108,14 +108,18 @@ class New_Course(simpledialog.Dialog):                   #inherit tkinter.simple
     if self.new_course_ID.get().strip() == '' or self.new_course_name.get().strip() == '':
       return 0
     
-    return grading.attendance_date_range_dryrun(self.days_toggle, self.from_entry.get(), self.to_entry.get())[0]
 
     status = 0
     for days in self.days_toggle:
       if days.get():
         status = 1
+        break
+    
+    if not status:
+      return 0
 
-    return status
+    return grading.attendance_date_range_dryrun(self.days_toggle, self.from_entry.get(), self.to_entry.get())[0]
+
 
   def apply(self):
     print("apply hit")
@@ -281,12 +285,28 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
       self.column('#0', width = 80)
       self.heading('#0', text = 'Date')
 
+      self.tree_attendance_dict = {}  #similar to edit_student's strategy of syncing data
+
       #inserting values
       for attendance in student_grade['attendances']:
-        self.insert('', 'end', text=attendance.date, values = (attendance.day_status))
+        insertion_ID = self.insert('', 'end', text=attendance.date, values = (attendance.day_status))
+        self.tree_attendance_dict.update({insertion_ID : attendance})
+
+    def edit_attendance(self):
+      attendance = self.tree_attendance_dict[self.focus()]
+      print(attendance.day_status, attendance.date)
+      #attendance.printAttendance()  #TODO: Create edit dialog
 
     def print_focus(self):
       print(self.item(self.focus()))
+    
+    def gen_att_optmenu(self, master):
+      descriptions = grading.Attendance.descriptions
+      output = tkinter.StringVar(master)
+      output.set('')
+      optmenu = tkinter.OptionMenu(master, output, *descriptions)
+
+      return optmenu
 
   class Score_Tree(ttk.Treeview):
     #Abstract. Use the below tress instead
@@ -348,7 +368,7 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
 
   def body(self, master):
     def print_selected_attendance():
-      attendance_tree.print_focus()
+      attendance_tree.edit_attendance()
 
     tkinter.Label(master, text="Last Name").grid(
         column=0, row=0, sticky='e')
@@ -364,8 +384,12 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
 
     attendance_tree = self.Attendance_Tree(master, self.student_grade)
     attendance_tree.grid(row=2, column=0, columnspan=2)
-    edit_attendance_button = tkinter.Button(master, text='Print Selected Attendance', command=print_selected_attendance)
-    edit_attendance_button.grid(row=3, column=0, columnspan=2)
+
+    tkinter.Label(master, text='Change Status to:').grid(row=3, column=0)
+    att_optmenu = attendance_tree.gen_att_optmenu(master)
+    att_optmenu.grid(row=3, column=1)
+    # edit_attendance_button = tkinter.Button(master, text='Print Selected Attendance', command=print_selected_attendance)
+    # edit_attendance_button.grid(row=3, column=0, columnspan=2)
     #TODO: Implement DUMMY
 
     homework_tree = self.Homework_Tree(master, self.student_grade)
@@ -478,6 +502,8 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
     # for i in self.exam_entry:
     #   exam_sum += int(i.get().strip()) / 100
     # self.exam_avg = str(round(exam_sum / len(self.exam_entry) * 100, 2))+"%"
+
+
 
 class Section_Frame(tkinter.Frame):
   # ---------------------

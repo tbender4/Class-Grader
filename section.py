@@ -33,27 +33,27 @@ class Section:
         
         return attendances
 
-    #TODO: BROKEN CODE
-    def add_attendance_date(self, date_string = None):
-        #adds to the global attendance_dates.
-        #TODO: Add code that'll replace in the student info
-        if not date_string:
-            #if info not given, default to today's date
-            self.attendance_dates.append(Attendance())
-        else:
-            # using american date system for now.
-            date = datetime.datetime.strptime(date_string, '%m/%d/%y')
-            self.attendance_dates.append(Attendance(date=date))
-            #date will be of type string. Parse before sending it to attendance
+    # #TODO: BROKEN CODE
+    # def add_attendance_date(self, date_string = None):
+    #     #adds to the global attendance_dates.
+    #     #TODO: Add code that'll replace in the student info
+    #     if not date_string:
+    #         #if info not given, default to today's date
+    #         self.attendance_dates.append(Attendance())
+    #     else:
+    #         # using american date system for now.
+    #         date = datetime.datetime.strptime(date_string, '%m/%d/%y')
+    #         self.attendance_dates.append(Attendance(date=date))
+    #         #date will be of type string. Parse before sending it to attendance
 
-    #TODO: BROKEN CODE
-    def update_all_attendance(self):
-        #if student has that attendance, do nothing. Otherwise continue on the other way
-        #TODO: This is O(n^2). Needs proper search algorithm.
-        for student_grade in self.student_grade_list:
-            for attendance in student_grade['attendances']:
-                pass
-    #TODO: Make attendnace dictionary of { date: status } Then redo this function   
+    # #TODO: BROKEN CODE
+    # def update_all_attendance(self):
+    #     #if student has that attendance, do nothing. Otherwise continue on the other way
+    #     #TODO: This is O(n^2). Needs proper search algorithm.
+    #     for student_grade in self.student_grade_list:
+    #         for attendance in student_grade['attendances']:
+    #             pass
+    # #TODO: Make attendnace dictionary of { date: status } Then redo this function   
 
     #TODO: This is possibly outdated
     def section_dict(self): #returns itself as dict format

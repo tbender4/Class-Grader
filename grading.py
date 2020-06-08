@@ -18,8 +18,6 @@ def attendance_date_range_dryrun(checkmark_list, from_date_str='5/6/19', to_date
     #if returns true, it is a valid range. Output is just whatever text may appear if clicked on "validate" instead of Apply/OK
     #date: mm/dd/yy
 
-    dates = []
-
     try:
         from_date = datetime.datetime.strptime(from_date_str, '%m/%d/%y')
         to_date = datetime.datetime.strptime(to_date_str, '%m/%d/%y')
@@ -122,11 +120,18 @@ class Score:
 class Attendance:
 	# status numbers: -1 = unknown, 0 = absent, 1 = present, 2 = late
     # have the front facing gui be a checkmark system? something
+
+    descriptions = ['Absent', 'Present', 'Late', 'N/C'] #desciptions index align with their status type.
     def __init__(self, day_status=-1, date = datetime.datetime.now().strftime('%m/%d/%y')):
         self.day_status = day_status
         self.date = date        #this is of type string.
         self.printAttendance()
+        
+        
 
+
+    def mark_not_counted(self): #typically for holiday
+        self.day_status = 3
     def mark_late(self):
         self.day_status = 2
     def mark_present(self):
