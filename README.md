@@ -16,24 +16,18 @@ While tkinter and traditional GUI applications have fallen out of favor with the
 
 The functionality of this software is best explained in screenshots of it current state in development.
 
-[]()
-[]()
-[]()
+![Cap 1](https://github.com/tbender4/Class-Grader/raw/dev/screencaps/cap1.png)
+![Cap 2](https://github.com/tbender4/Class-Grader/raw/dev/screencaps/cap2.png)
+![Cap 3](https://github.com/tbender4/Class-Grader/raw/dev/screencaps/cap3.png)
 
 ## Ideas
 
 06/07:
 
-[ ] Complete the remaining parts of the student_grade dictionary
-
-[ ] Finish Attendance GUI so it can editable
-
-[ ] Score needs to be editable. Then implement in GUI
-
-[ ] Score needs to be expandable yet reflecting for every student.
-
-[ ] Once basic editable works, implement useful functions for switching scores, status of attendance, etc
-
-[ ] implement calculation of grades. Toggling curve and not
-
-[ ] Bell curve with matplotlib.
+- [ ] Complete the remaining parts of the student_grade dictionary
+- [ ] Finish Attendance GUI so it can editable
+- [ ] Score needs to be editable. Then implement in GUI
+- [ ] Score needs to be expandable yet reflecting for every student.
+- [ ] Once basic editable works, implement useful functions for switching scores, status of attendance, etc
+- [ ] implement calculation of grades. Toggling curve and not
+- [ ] Bell curve with matplotlib.
