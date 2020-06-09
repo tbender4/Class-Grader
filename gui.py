@@ -295,6 +295,15 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
         insertion_ID = self.insert('', 'end', text=attendance.date, values = (value))
         self.tree_attendance_dict.update({insertion_ID : attendance})
 
+    def gen_overall_att_grade(self):
+      # returns raw overall grade and associated grade letter.
+      # grade letter conversion should be a function found in grading.
+      # have button to change this policy.
+      for attendance in self.tree_attendance_dict:
+        continue
+      return
+
+
     def edit_attendance(self):
       attendance = self.tree_attendance_dict[self.focus()]
       print(attendance.day_status, attendance.date)
@@ -331,9 +340,9 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
       #formatting
       header_names = {
         #'homework_number' : 'Homework Number',
-        'description' : 'Description',
         'grade' : 'Grade',
-        'use_curve' : "Grade Type"
+        'use_curve' : "Grade Type",
+        'description' : 'Description'
       }
       self['columns'] = list(header_names.keys())
       for key, value in header_names.items():
@@ -384,13 +393,17 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
     def print_selected_attendance():
       attendance_tree.edit_attendance()
 
-    tkinter.Label(master, text="Last Name").grid(
+    
+    name_frame = tkinter.Frame(master)
+    name_frame.grid(row = 0, column = 0, rowspan = 2, columnspan = 2)
+
+    tkinter.Label(name_frame, text="Last Name").grid(
         column=0, row=0, sticky='e')
-    tkinter.Label(master, text="First Name:").grid(
+    tkinter.Label(name_frame, text="First Name:").grid(
         column=0, row=1, sticky='e')
-    self.last_name_entry = tkinter.Entry(master)
+    self.last_name_entry = tkinter.Entry(name_frame)
     self.last_name_entry.insert(0, self.last_name)
-    self.first_name_entry = tkinter.Entry(master)
+    self.first_name_entry = tkinter.Entry(name_frame)
     self.first_name_entry.insert(0, self.first_name)
 
     self.last_name_entry.grid(column=1, row=0)
