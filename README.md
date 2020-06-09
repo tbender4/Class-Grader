@@ -23,7 +23,11 @@ The functionality of this software is best explained in screenshots of it curren
 ## Ideas
 
 06/08:
-Treeview `focus()` is just the last selected. `selection()` is what I need to allow multiple selection. Make this changes after current app works.
+Treeview `focus()` is just the last selected. `selection()` is what I need to allow multiple selection. Make these changes after Attendance and Core related GUI elements are fleshed out.
+
+## Known Bugs
+
+
 
 06/07:
 
