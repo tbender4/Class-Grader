@@ -120,7 +120,9 @@ class Score:
 class Attendance:
 	# status numbers: -1 = unknown, 0 = absent, 1 = present, 2 = late
     # have the front facing gui be a checkmark system? something
+    
 
+    
     descriptions = ['Absent', 'Present', 'Late', 'N/C'] #desciptions index align with their status type.
     def __init__(self, day_status=-1, date = datetime.datetime.now().strftime('%m/%d/%y')):
         self.day_status = day_status
@@ -142,24 +144,36 @@ class Attendance:
     def printAttendance(self):
         print(self.day_status, self.date, '| ', end='')
 
-    @staticmethod   #TODO: Implement this eventually.
-    def attendance_generate_grade(attendance=[-1], free_miss_days=0, have_max_missed_days=False, max_missed_days=6, late_convert_to_absence=False, late_penalty=0.5):
-        attended = 0
-        late = 0
-        for class_day in attendance:
-            if class_day == 1:
-                attended += 1
-            if class_day == 0:
-                max_missed_days -= 1
-            if class_day == 2:
-                late += late_penalty
+    @staticmethod   #TODO: 06/13 Basic Implementation done. Flesh out the arguments.
+    def attendance_generate_grade(attendances=[Attendance()], free_miss_days=0, have_max_missed_days=False, max_missed_days=6, late_convert_to_absence=False, late_penalty=0.5):
+        #DEFINE
+        unknown = -1
+        absent = 0
+        present = 1
+        late = 2
+        nc = 3
+        total = [0, 0, 0, 0]
+        for day in attendances:
+            if day.day_status == unknown:
+                continue
+            total[day.day_status] += 1
+        
+        
+                    
+        # for class_day in attendance:
+        #     if class_day == 1:
+        #         attended += 1
+        #     if class_day == 0:
+        #         max_missed_days -= 1
+        #     if class_day == 2:
+        #         late += late_penalty
 
-        raw_score = attended / len(attendance) - free_miss_days - late
+        # raw_score = attended / len(attendance) - free_miss_days - late
 
-        if have_max_missed_days:
-            if max_missed_days < 0:
-                return 0	#fail
-        if raw_score >= 1:
-            return 1	#max points adjusted to max score
-        return attended / len(attendance)
+        # if have_max_missed_days:
+        #     if max_missed_days < 0:
+        #         return 0	#fail
+        # if raw_score >= 1:
+        #     return 1	#max points adjusted to max score
+        # return attended / len(attendance)
 
