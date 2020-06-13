@@ -11,6 +11,31 @@ exam_size = 0
 #TODO: Have the count be compared to the size of the array. If need be, create dummy values for ungraded Scores.
 # Focus on implementing this after properly implementin attendance. (have attendance be fixed)
 
+def letter_grade(avg = 0.0):
+    #TODO: Allow changing of parameters. For now, just doing flat conversion.
+    if avg >= 97:
+        return 'A+'
+    if avg >= 93:
+        return 'A'
+    if avg >= 90:
+        return 'A-'
+    if avg >= 87:
+        return 'B+'
+    if avg >= 83:
+        return 'B'
+    if avg >= 80:
+        return 'B-'
+    if avg >= 77:
+        return 'C+'
+    if avg >= 73:
+        return 'C'
+    if avg >= 70:
+        return 'C-'
+    if avg >= 67:
+        return 'D+'
+    if avg >= 60:
+        return 'D'
+    return 'F'
 
 def attendance_date_range_dryrun(checkmark_list, from_date_str='5/6/19', to_date_str='01/20/20', ):
     #checkmark_list: [1, 0, 1, 0, 0, 0, 1] -> monday, tuesday, saturday
@@ -144,8 +169,9 @@ class Attendance:
     def printAttendance(self):
         print(self.day_status, self.date, '| ', end='')
 
+
     @staticmethod   #TODO: 06/13 Basic Implementation done. Flesh out the arguments.
-    def attendance_generate_grade(attendances=[Attendance()], free_miss_days=0, have_max_missed_days=False, max_missed_days=6, late_convert_to_absence=False, late_penalty=0.5):
+    def attendance_generate_grade(attendances=[],  late_penalty=0.5, free_miss_days=0, have_max_missed_days=False, max_missed_days=6, late_convert_to_absence=False):
         #DEFINE
         unknown = -1
         absent = 0
@@ -153,10 +179,26 @@ class Attendance:
         late = 2
         nc = 3
         total = [0, 0, 0, 0]
+        
+        numerator = 0
+        denominator = 0
         for day in attendances:
-            if day.day_status == unknown:
+            if day.day_status == unknown or day.day_status == nc:
                 continue
-            total[day.day_status] += 1
+            try:
+                total[day.day_status] = total[day.day_status] + 1
+            except IndexError:
+                print( "INDEX ERROR")
+                return
+            except:
+                print("UNKNOWN ERROR")
+                return
+            denominator += 1
+
+        numerator = total[present]
+        numerator = numerator + total[late] * late_penalty
+        denominator = total[present] + total[late]
+        return numerator / denominator
         
         
                     

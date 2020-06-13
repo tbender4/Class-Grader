@@ -272,6 +272,8 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
     def __init__ (self, master, student_grade):
       super().__init__(master)
 
+      self.attendances = student_grade['attendances']
+
       #formatting
       header_names = {
         #'date' : 'Date',
@@ -295,14 +297,14 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
         insertion_ID = self.insert('', 'end', text=attendance.date, values = (value))
         self.tree_attendance_dict.update({insertion_ID : attendance})
 
-    def gen_overall_att_grade(self):
+    def update_overall_att_grade_string_var(self, output_string):
       # returns raw overall grade and associated grade letter.
       # grade letter conversion should be a function found in grading.
       # have button to change this policy.
-      for attendance in self.tree_attendance_dict:
-        continue
-      return
+      avg = grading.Attendance.attendance_generate_grade(self.attendances)
+      letter_grade = grading.letter_grade(avg)
 
+      output_string.set('Current Grade: {}, {}'.format(letter_grade, avg))
 
     def edit_attendance(self):
       attendance = self.tree_attendance_dict[self.focus()]
@@ -321,6 +323,8 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
       optmenu = tkinter.OptionMenu(master, self.output, *descriptions)
       
       self.output.trace('w', self.update_att)
+
+      self.update_overall_att_grade_string_var(self.output)
       return optmenu
     
     def update_att(self, *args):
@@ -416,6 +420,13 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
     tkinter.Label(att_frame, text='Change Status to:').grid(row=1, column=0)
     att_optmenu = attendance_tree.gen_att_optmenu(att_frame)
     att_optmenu.grid(row=1, column=1)
+
+    
+    self.att_grade_msg = tkinter.StringVar(master)
+    self.att_grade_msg.set('')
+    att_grade = tkinter.Label(att_frame, text=self.att_grade_msg)
+    att_grade.grid(row=2, column=0, columnspan=2)
+
     # edit_attendance_button = tkinter.Button(master, text='Print Selected Attendance', command=print_selected_attendance)
     # edit_attendance_button.grid(row=3, column=0, columnspan=2)
     #TODO: Implement DUMMY
