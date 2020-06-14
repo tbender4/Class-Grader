@@ -301,7 +301,7 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
       # returns raw overall grade and associated grade letter.
       # grade letter conversion should be a function found in grading.
       # have button to change this policy.
-      avg = grading.Attendance.attendance_generate_grade(self.attendances)
+      avg = grading.attendance_generate_grade(self.attendances)
       letter_grade = grading.letter_grade(avg)
 
       output_string.set('Current Grade: {}, {}'.format(letter_grade, avg))
@@ -324,13 +324,13 @@ class Edit_Student(simpledialog.Dialog):  # inherit tkinter.simpledialog
       
       self.output.trace('w', self.update_att)
 
-      self.update_overall_att_grade_string_var(self.output)
       return optmenu
     
     def update_att(self, *args):
       attendance = self.tree_attendance_dict[self.focus()]
       index = grading.Attendance.descriptions.index(self.output.get())
 
+      self.update_overall_att_grade_string_var()
       attendance.day_status = index
 
       self.item(self.focus(), values=(self.output.get()))

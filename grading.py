@@ -87,6 +87,36 @@ def attendance_date_range(checkmark_list, from_date_str='5/6/19', to_date_str='0
     
     return attendance_date_template
     
+def attendance_generate_grade(attendances=[],  late_penalty=0.5, free_miss_days=0, have_max_missed_days=False, max_missed_days=6, late_convert_to_absence=False):
+    #DEFINE
+    unknown = -1
+    absent = 0
+    present = 1
+    late = 2
+    nc = 3
+    total = [0, 0, 0, 0]
+    
+    numerator = 0
+    denominator = 0
+    for day in attendances:
+        if day.day_status == unknown or day.day_status == nc:
+            continue
+        try:
+            total[day.day_status] = total[day.day_status] + 1
+        except IndexError:
+            print( "INDEX ERROR")
+            return
+        except:
+            print("UNKNOWN ERROR")
+            return
+        denominator += 1
+
+    numerator = total[present]
+    numerator = numerator + total[late] * late_penalty
+    denominator = total[present] + total[late]
+    if denominator == 0:
+        return "NO ATTENDANCES ERROR"
+    return numerator / denominator
 
 class Score:
     # def __init__(self):
@@ -170,35 +200,7 @@ class Attendance:
         print(self.day_status, self.date, '| ', end='')
 
 
-    @staticmethod   #TODO: 06/13 Basic Implementation done. Flesh out the arguments.
-    def attendance_generate_grade(attendances=[],  late_penalty=0.5, free_miss_days=0, have_max_missed_days=False, max_missed_days=6, late_convert_to_absence=False):
-        #DEFINE
-        unknown = -1
-        absent = 0
-        present = 1
-        late = 2
-        nc = 3
-        total = [0, 0, 0, 0]
-        
-        numerator = 0
-        denominator = 0
-        for day in attendances:
-            if day.day_status == unknown or day.day_status == nc:
-                continue
-            try:
-                total[day.day_status] = total[day.day_status] + 1
-            except IndexError:
-                print( "INDEX ERROR")
-                return
-            except:
-                print("UNKNOWN ERROR")
-                return
-            denominator += 1
 
-        numerator = total[present]
-        numerator = numerator + total[late] * late_penalty
-        denominator = total[present] + total[late]
-        return numerator / denominator
         
         
                     
